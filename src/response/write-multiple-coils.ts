@@ -1,6 +1,7 @@
-import { FC } from '../codes/index.js'
-import WriteMultipleCoilsRequestBody from '../request/write-multiple-coils.js'
-import ModbusWriteResponseBody from './write-response.body.js'
+import { Buffer } from 'buffer'
+import { FC } from '../codes/index'
+import WriteMultipleCoilsRequestBody from '../request/write-multiple-coils'
+import ModbusWriteResponseBody from './write-response.body'
 
 /** WriteMultipleCoils Response Body (Function Code 0x0f)
  * @extends ModbusResponseBody

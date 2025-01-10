@@ -1,4 +1,5 @@
 
+import { Buffer } from 'buffer'
 import { FunctionCode, isFunctionCode } from '../codes'
 import ModbusRequestBody from '../request/request-body'
 

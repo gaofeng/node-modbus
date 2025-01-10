@@ -1,9 +1,10 @@
-import Debug = require('debug'); const debug = Debug('tcp-response')
-import ModbusAbstractResponse from './abstract-response.js'
+import Debug from 'debug'; const debug = Debug('tcp-response')
+import ModbusAbstractResponse from './abstract-response'
 import { ModbusRequestBody } from './request'
-import ModbusResponseBody from './response/response-body.js'
-import ResponseFactory from './response/response-factory.js'
-import ModbusTCPRequest from './tcp-request.js'
+import ModbusResponseBody from './response/response-body'
+import ResponseFactory from './response/response-factory'
+import ModbusTCPRequest from './tcp-request'
+import { Buffer } from 'buffer';
 
 /** Modbus/TCP Response
  * @class

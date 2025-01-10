@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import { FunctionCode } from '../codes'
 import { BooleanArray } from '../constants'
 import ModbusBaseResponseBody from './response-body'

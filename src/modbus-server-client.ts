@@ -1,11 +1,13 @@
 
-import Debug = require('debug'); const debug = Debug('modbus tcp client socket')
+import Debug from 'debug';
+const debug = Debug('modbus-server-client')
 import * as Stream from 'stream'
-import { ModbusAbstractRequestFromBuffer } from './abstract-request.js'
-import { ModbusAbstractResponseFromRequest } from './abstract-response.js'
-import ModbusServerRequestHandler from './modbus-server-request-handler.js'
-import ModbusServerResponseHandler from './modbus-server-response-handler.js'
-import ModbusServer from './modbus-server.js'
+import { ModbusAbstractRequestFromBuffer } from './abstract-request'
+import { ModbusAbstractResponseFromRequest } from './abstract-response'
+import ModbusServerRequestHandler from './modbus-server-request-handler'
+import ModbusServerResponseHandler from './modbus-server-response-handler'
+import ModbusServer from './modbus-server'
+import { Buffer } from 'buffer';
 
 export default class ModbusServerClient<
   S extends Stream.Duplex,

@@ -1,7 +1,9 @@
+import { Buffer } from 'buffer';
 import ModbusAbstractRequest, { ModbusAbstractRequestFromBuffer } from './abstract-request'
 import ModbusRTURequest from './rtu-request'
 
-import Debug = require('debug'); const debug = Debug('modbus-server-request-handler')
+import Debug from 'debug'; 
+const debug = Debug('modbus-server-request-handler')
 
 export default class ModbusServerRequestHandler<FB extends ModbusAbstractRequestFromBuffer<any>> {
   public _fromBuffer: FB

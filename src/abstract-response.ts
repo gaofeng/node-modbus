@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import ModbusAbstractRequest from './abstract-request'
 import { ModbusRequestBody } from './request'
 import { ModbusResponseBody } from './response'

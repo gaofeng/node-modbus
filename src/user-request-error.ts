@@ -1,5 +1,5 @@
-import ModbusAbstractRequest from './abstract-request'
-import ModbusAbstractResponse from './abstract-response'
+import type ModbusAbstractRequest from './abstract-request'
+import type ModbusAbstractResponse from './abstract-response'
 
 export type UserRequestErrorCodes = 'OutOfSync' | 'Protocol' | 'Timeout' | 'ManuallyCleared' | 'ModbusException' | 'Offline' | 'crcMismatch'
 

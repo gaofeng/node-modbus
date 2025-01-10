@@ -1,6 +1,7 @@
-import { FC } from '../codes/index.js'
-import WriteSingleCoilRequestBody from '../request/write-single-coil.js'
-import ModbusWriteResponseBody from './write-response.body.js'
+import { Buffer } from 'buffer'
+import { FC } from '../codes/index'
+import WriteSingleCoilRequestBody from '../request/write-single-coil'
+import ModbusWriteResponseBody from './write-response.body'
 
 /** Write Single Coil Response Body
  * @extends ModbusResponseBody

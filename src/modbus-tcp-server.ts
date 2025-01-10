@@ -1,9 +1,9 @@
-import Debug = require('debug'); const debug = Debug('modbus tcp server')
+import Debug from 'debug'; const debug = Debug('modbus tcp server')
 import { Server, Socket } from 'net'
 import ModbusServer, { IModbusServerOptions } from './modbus-server'
-import ModbusServerClient from './modbus-server-client.js'
-import ModbusTCPRequest from './tcp-request.js'
-import ModbusTCPResponse from './tcp-response.js'
+import ModbusServerClient from './modbus-server-client'
+import ModbusTCPRequest from './tcp-request'
+import ModbusTCPResponse from './tcp-response'
 
 export default class ModbusTCPServer extends ModbusServer {
   public _server: Server | ModbusServer

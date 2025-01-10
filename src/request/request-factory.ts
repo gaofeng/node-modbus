@@ -1,17 +1,18 @@
 
+import { Buffer } from 'buffer'
 import {
   FC,
   isFunctionCode
 } from '../codes'
-import ExceptionRequest from './exception.js'
-import ReadCoilsRequest from './read-coils.js'
-import ReadDiscreteInputsRequest from './read-discrete-inputs.js'
-import ReadHoldingRegistersRequest from './read-holding-registers.js'
-import ReadInputRegistersRequest from './read-input-registers.js'
-import WriteMultipleCoilsResponse from './write-multiple-coils.js'
-import WriteMultipleRegistersResponse from './write-multiple-registers.js'
-import WriteSingleCoilRequest from './write-single-coil.js'
-import WriteSingleRegisterRequest from './write-single-register.js'
+import ExceptionRequest from './exception'
+import ReadCoilsRequest from './read-coils'
+import ReadDiscreteInputsRequest from './read-discrete-inputs'
+import ReadHoldingRegistersRequest from './read-holding-registers'
+import ReadInputRegistersRequest from './read-input-registers'
+import WriteMultipleCoilsResponse from './write-multiple-coils'
+import WriteMultipleRegistersResponse from './write-multiple-registers'
+import WriteSingleCoilRequest from './write-single-coil'
+import WriteSingleRegisterRequest from './write-single-register'
 
 import Debug from 'debug'; const debug = Debug('request-factory')
 

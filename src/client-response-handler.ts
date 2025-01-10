@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import MBAbstractResponse from './abstract-response'
 
 /** Modbus Client Repsonse Handler

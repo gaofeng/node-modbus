@@ -26,7 +26,7 @@ import {
 
 import ModbusAbstractRequest from './abstract-request'
 import { ModbusAbstractResponseFromRequest } from './abstract-response'
-import BufferUtils from './buffer-utils.js'
+import BufferUtils from './buffer-utils'
 import { FC, isFunctionCode } from './codes'
 
 const {
@@ -34,7 +34,8 @@ const {
   arrayStatusToBuffer
 } = BufferUtils
 
-import Debug = require('debug'); const debug = Debug('modbus tcp response handler')
+import Debug from 'debug';import { Buffer } from 'buffer'
+ const debug = Debug('modbus tcp response handler')
 
 export default class ModbusServerResponseHandler<FR extends ModbusAbstractResponseFromRequest> {
   public _server: ModbusServer

@@ -3,15 +3,16 @@ const OFFLINE = 'Offline'
 const MODBUS_EXCEPTION = 'ModbusException'
 const MANUALLY_CLEARED = 'ManuallyCleared'
 
-import Debug = require('debug'); const debug = Debug('client-request-handler')
+import Debug from 'debug';
+const debug = Debug('client-request-handler')
 import * as Stream from 'stream'
-import ModbusAbstractRequest from './abstract-request.js'
-import ModbusAbstractResponse from './abstract-response.js'
+import ModbusAbstractRequest from './abstract-request'
+import ModbusAbstractResponse from './abstract-response'
 import { ModbusRequestBody } from './request'
-import { CastRequestBody } from './request-response-map.js'
-import ExceptionResponseBody from './response/exception.js'
+import { CastRequestBody } from './request-response-map'
+import ExceptionResponseBody from './response/exception'
 import { UserRequestError } from './user-request-error'
-import UserRequest, { PromiseUserRequest } from './user-request.js'
+import UserRequest, { PromiseUserRequest } from './user-request'
 
 /** Common Request Handler
  * @abstract

@@ -1,15 +1,17 @@
-import Debug = require('debug'); const debug = Debug('response-factory')
+import { Buffer } from 'buffer';
+import Debug from 'debug'; 
+const debug = Debug('response-factory')
 
-import { FC } from '../codes/index.js'
-import ExceptionResponseBody from './exception.js'
-import ReadCoilsResponseBody from './read-coils.js'
-import ReadDiscreteInputsBody from './read-discrete-inputs.js'
-import ReadHoldingRegistersBody from './read-holding-registers.js'
-import ReadInputRegistersBody from './read-input-registers.js'
-import WriteMultipleCoilsBody from './write-multiple-coils.js'
-import WriteMultipleRegistersBody from './write-multiple-registers.js'
-import WriteSingleCoilBody from './write-single-coil.js'
-import WriteSingleRegisterBody from './write-single-register.js'
+import { FC } from '../codes'
+import ExceptionResponseBody from './exception'
+import ReadCoilsResponseBody from './read-coils'
+import ReadDiscreteInputsBody from './read-discrete-inputs'
+import ReadHoldingRegistersBody from './read-holding-registers'
+import ReadInputRegistersBody from './read-input-registers'
+import WriteMultipleCoilsBody from './write-multiple-coils'
+import WriteMultipleRegistersBody from './write-multiple-registers'
+import WriteSingleCoilBody from './write-single-coil'
+import WriteSingleRegisterBody from './write-single-register'
 
 /** Response Factory
  * @factory

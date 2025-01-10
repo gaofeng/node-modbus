@@ -1,5 +1,6 @@
-import { FC } from '../codes/index.js'
-import ModbusRequestBody from './request-body.js'
+import { Buffer } from 'buffer'
+import { FC } from '../codes/index'
+import ModbusRequestBody from './request-body'
 
 /** Write Single Coil Request Body
  * @extends ModbusRequestBody

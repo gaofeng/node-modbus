@@ -1,6 +1,8 @@
-import Debug = require('debug'); const debug = Debug('tcp-response-handler')
-import ModbusClientResponseHandler from './client-response-handler.js'
-import ModbusTCPResponse from './tcp-response.js'
+import Debug from 'debug';
+const debug = Debug('tcp-response-handler')
+import ModbusClientResponseHandler from './client-response-handler'
+import ModbusTCPResponse from './tcp-response'
+import { Buffer } from 'buffer';
 
 /** Modbus/TCP Client Response Handler.
  * @extends ModbusClientResponseHandler

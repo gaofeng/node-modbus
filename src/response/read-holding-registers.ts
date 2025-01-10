@@ -1,8 +1,10 @@
-import Debug = require('debug'); const debug = Debug('ReadHoldingRegistersResponseBody')
-import BufferUtils from '../buffer-utils.js'
+import Debug from 'debug'; 
+const debug = Debug('ReadHoldingRegistersResponseBody')
+import BufferUtils from '../buffer-utils'
 import { FC } from '../codes'
 import ReadHoldingRegistersRequestBody from '../request/read-holding-registers'
-import ModbusReadResponseBody from './read-response-body.js'
+import ModbusReadResponseBody from './read-response-body'
+import { Buffer } from 'buffer';
 
 /** Read Holding Registers ResponseBody (Function Code 0x03)
  * @extends ModbusResponseBody
@@ -59,7 +61,7 @@ export default class ReadHoldingRegistersResponseBody extends ModbusReadResponse
       return null
     }
 
-    const values = []
+    const values:number[] = []
     for (let i = 0; i < byteCount; i += 2) {
       values.push(payload.readUInt16BE(i))
     }

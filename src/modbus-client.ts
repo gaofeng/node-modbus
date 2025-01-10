@@ -1,4 +1,5 @@
-import Debug = require('debug'); const debug = Debug('modbus-client')
+import Debug from 'debug';
+const debug = Debug('modbus-client')
 
 import * as Stream from 'stream'
 
@@ -21,6 +22,7 @@ import { UserRequestError } from './errors'
 import { CastRequestBody } from './request-response-map'
 import { WriteMultipleCoilsResponseBody } from './response'
 import { PromiseUserRequest } from './user-request.js'
+import { Buffer } from 'buffer';
 
 /** Common Modbus Client
  * @abstract

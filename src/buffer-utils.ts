@@ -1,7 +1,9 @@
 
+import { Buffer } from 'buffer';
 import { BooleanArray, Byte } from './constants'
 
-import Debug = require('debug'); const debug = Debug('buffer-utils')
+import Debug from 'debug'; 
+const debug = Debug('buffer-utils')
 
 // Buffer utilities to make simplify writing multiple coils
 /*
@@ -130,4 +132,4 @@ class BufferUtils {
   }
 }
 
-export = BufferUtils
+export default BufferUtils

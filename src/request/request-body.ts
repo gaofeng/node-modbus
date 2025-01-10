@@ -1,4 +1,4 @@
-
+import { Buffer } from 'buffer'
 import { FunctionCode } from '../codes'
 
 import Debug from 'debug'
