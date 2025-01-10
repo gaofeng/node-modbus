@@ -38,10 +38,8 @@ import ModbusRTUServer from './modbus-rtu-server.js'
 
 import * as Codes from './codes'
 import * as Errors from './errors'
-import * as Requests from './request'
-import * as Responses from './response'
-import UserRequest from './user-request.js'
-
+export * as Requests from './request'
+export * as Responses from './response'
 import { LIMITS } from './constants'
 
 export const client = {
@@ -54,12 +52,7 @@ export const server = {
   TCP: ModbusTCPServer
 }
 
-export const requests = {
-  ...Requests,
-  UserRequest
-}
-
-export const responses = Responses
+// export const responses = Responses
 export const codes = Codes
 export const errors = Errors
 export const limits = LIMITS
@@ -69,6 +62,8 @@ export { default as ModbusAbstractResponse } from './abstract-response'
 export { default as MBClientRequestHandler } from './client-request-handler'
 export { default as ModbusClientResponseHandler } from './client-response-handler'
 export { default as ModbusClient } from './modbus-client'
+export { default as ModbusServerClient } from './modbus-server-client.js'
+export { BufferCB } from './modbus-server'
 export * from './request-response-map'
 export { default as ModbusTCPRequest } from './tcp-request'
 export { default as ModbusTCPResponse } from './tcp-response'
@@ -84,6 +79,9 @@ export {
 export {
   UserRequestMetrics
 } from './user-request-metrics'
+
+export { ModbusAbstractRequestFromBuffer } from './abstract-request'
+export { ModbusAbstractResponseFromRequest } from './abstract-response'
 
 export {
   ModbusTCPClient,
