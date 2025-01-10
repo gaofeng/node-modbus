@@ -1,10 +1,10 @@
 
 import { Socket } from 'net'
-import MBClient from './modbus-client.js'
-import MBTCPClientRequestHandler from './tcp-client-request-handler.js'
-import ModbusTCPClientResponseHandler from './tcp-client-response-handler.js'
-import ModbusTCPRequest from './tcp-request.js'
-import ModbusTCPResponse from './tcp-response.js'
+import MBClient from './modbus-client'
+import MBTCPClientRequestHandler from './tcp-client-request-handler'
+import ModbusTCPClientResponseHandler from './tcp-client-response-handler'
+import ModbusTCPRequest from './tcp-request'
+// import ModbusTCPResponse from './tcp-response'
 
 /** This client must be initiated with a net.Socket object. The module does not handle reconnections
  * or anything related to keep the connection up in case of an unplugged cable or a closed server. See

@@ -1,6 +1,7 @@
-import { FC } from '../codes/index.js'
-import WriteSingleRegisterRequestBody from '../request/write-single-register.js'
-import ModbusWriteResponseBody from './write-response.body.js'
+import { Buffer } from 'buffer'
+import { FC } from '../codes/index'
+import WriteSingleRegisterRequestBody from '../request/write-single-register'
+import ModbusWriteResponseBody from './write-response.body'
 
 /** WriteSingleRegister Resonse Body (Function code 0x05)
  * @extends ModbusResponseBody

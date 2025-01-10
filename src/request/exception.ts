@@ -1,6 +1,7 @@
+import { Buffer } from 'buffer'
 import { ErrorCode, FunctionCode, isFunctionCode } from '../codes'
 
-import ModbusRequestBody from './request-body.js'
+import ModbusRequestBody from './request-body'
 
 /** Write Single Coil Request Body
  * @extends ModbusRequestBody

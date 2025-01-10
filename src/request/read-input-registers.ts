@@ -1,6 +1,7 @@
+import { Buffer } from 'buffer'
 import { FC } from '../codes'
 
-import ModbusRequestBody from './request-body.js'
+import ModbusRequestBody from './request-body'
 
 /** Read Input Registers Request Body
  * @extends ModbusRequestBody

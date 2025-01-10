@@ -8,7 +8,7 @@ export {
   isReadDeviceIdentificationRequestBody,
   ReadDeviceIdentificationCode
 } from './read-device-identification'
-export { default as ModbusRequestBody, isModbusRequestBody, ModbusRequestTypeName } from './request-body'
+export { default as ModbusRequestBody, isModbusRequestBody, type ModbusRequestTypeName } from './request-body'
 export { default as RequestFactory } from './request-factory'
 export { default as WriteMultipleCoilsRequestBody, isWriteMultipleCoilsRequestBody } from './write-multiple-coils'
 export { default as WriteMultipleRegistersRequestBody, isWriteMultipleRegistersRequestBody } from './write-multiple-registers'

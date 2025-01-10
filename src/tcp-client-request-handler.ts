@@ -2,10 +2,11 @@
 import ModbusRequestBody from './request/request-body'
 import ModbusTCPResponse from './tcp-response'
 
-import Debug = require('debug'); const debug = Debug('tcp-client-request-handler')
+import Debug from 'debug';
+const debug = Debug('tcp-client-request-handler')
 import { Socket } from 'net'
-import MBClientRequestHandler from './client-request-handler.js'
-import ModbusTCPRequest from './tcp-request.js'
+import MBClientRequestHandler from './client-request-handler'
+import ModbusTCPRequest from './tcp-request'
 import UserRequest from './user-request'
 import { UserRequestError } from './user-request-error'
 

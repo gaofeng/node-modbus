@@ -1,6 +1,7 @@
-import { FC } from '../codes/index.js'
-import ReadInputRegistersRequestBody from '../request/read-input-registers.js'
-import ModbusReadResponseBody from './read-response-body.js'
+import { Buffer } from 'buffer'
+import { FC } from '../codes/index'
+import ReadInputRegistersRequestBody from '../request/read-input-registers'
+import ModbusReadResponseBody from './read-response-body'
 
 /** Read Input Registers Response Body (Function Code 0x04)
  * @extends ModbusResponseBody
@@ -55,7 +56,7 @@ export default class ReadInputRegistersResponseBody extends ModbusReadResponseBo
       return null
     }
 
-    const values = []
+    const values: number[] = []
     for (let i = 0; i < byteCount; i += 2) {
       values.push(payload.readUInt16BE(i))
     }

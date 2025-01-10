@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import { FC } from '../codes'
 import WriteMultipleRegistersRequestBody from '../request/write-multiple-registers'
 

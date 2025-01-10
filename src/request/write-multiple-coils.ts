@@ -1,6 +1,7 @@
+import { Buffer } from 'buffer'
 import { FC } from '../codes'
 
-import ModbusRequestBody from './request-body.js'
+import ModbusRequestBody from './request-body'
 
 /** Write Multiple Coils Request Body
  * @extends ModbusRequestBody

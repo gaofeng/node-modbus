@@ -1,8 +1,8 @@
 
-import ModbusServerClient from './modbus-server-client.js'
-import ModbusServer, { IModbusServerOptions } from './modbus-server.js'
-import ModbusRTURequest from './rtu-request.js'
-import ModbusRTUResponse from './rtu-response.js'
+import ModbusServerClient from './modbus-server-client'
+import ModbusServer, { IModbusServerOptions } from './modbus-server'
+import ModbusRTURequest from './rtu-request'
+import ModbusRTUResponse from './rtu-response'
 
 import {SerialPort} from 'serialport'
 

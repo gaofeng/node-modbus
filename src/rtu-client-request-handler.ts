@@ -1,13 +1,14 @@
 
-import Debug = require('debug'); const debug = Debug('rtu-client-request-handler')
+import Debug from 'debug'; const debug = Debug('rtu-client-request-handler')
 import CRC from 'crc'
 import { SerialPort as SerialSocket } from 'serialport'
-import MBClientRequestHandler from './client-request-handler.js'
-import ModbusRequestBody from './request/request-body.js'
-import ModbusRTURequest from './rtu-request.js'
-import ModbusRTUResponse from './rtu-response.js'
+import MBClientRequestHandler from './client-request-handler'
+import ModbusRequestBody from './request/request-body'
+import ModbusRTURequest from './rtu-request'
+import ModbusRTUResponse from './rtu-response'
 import { UserRequestError } from './user-request-error'
-import UserRequest from './user-request.js'
+import UserRequest from './user-request'
+import { Buffer } from 'buffer';
 
 /** Modbus/RTU Client Request Handler
  * Implements behaviour for Client Requests for Modbus/RTU

@@ -1,7 +1,8 @@
-import Debug = require('debug'); const debug = Debug('tcp-request')
-import ModbusAbstractRequest from './abstract-request.js'
-import ModbusRequestBody from './request/request-body.js'
-import RequestFactory from './request/request-factory.js'
+import Debug from 'debug'; const debug = Debug('tcp-request')
+import ModbusAbstractRequest from './abstract-request'
+import ModbusRequestBody from './request/request-body'
+import RequestFactory from './request/request-factory'
+import { Buffer } from 'buffer';
 
 /** Class representing a Modbus TCP Request */
 export default class ModbusTCPRequest<ReqBody extends ModbusRequestBody = ModbusRequestBody>

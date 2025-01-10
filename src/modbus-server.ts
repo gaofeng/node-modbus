@@ -1,8 +1,9 @@
-import { EventEmitter } from 'events'
+import { EventEmitter } from 'eventemitter3';
 import { Socket } from 'net'
 import ModbusAbstractRequest from './abstract-request'
 import { BooleanArray } from './constants'
 import ModbusServerClient from './modbus-server-client'
+import { Buffer } from 'buffer'
 
 type AbstractRequest = ModbusAbstractRequest
 

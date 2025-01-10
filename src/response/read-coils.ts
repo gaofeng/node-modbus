@@ -1,9 +1,11 @@
-import Debug = require('debug'); const debug = Debug('read-coils-response')
-import BufferUtils from '../buffer-utils.js'
+import Debug from 'debug'; 
+const debug = Debug('read-coils-response')
+import BufferUtils from '../buffer-utils'
 import { FC } from '../codes'
 import { BooleanArray } from '../constants'
-import ReadCoilsRequestBody from '../request/read-coils.js'
-import ModbusReadResponseBody from './read-response-body.js'
+import ReadCoilsRequestBody from '../request/read-coils'
+import ModbusReadResponseBody from './read-response-body'
+import { Buffer } from 'buffer';
 
 const {
   bufferToArrayStatus,

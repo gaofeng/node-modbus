@@ -1,6 +1,7 @@
-import Debug = require('debug'); const debug = Debug('rtu-response-handler')
-import ModbusClientResponseHandler from './client-response-handler.js'
-import ModbusRTUResponse from './rtu-response.js'
+import Debug from 'debug'; const debug = Debug('rtu-response-handler')
+import ModbusClientResponseHandler from './client-response-handler'
+import ModbusRTUResponse from './rtu-response'
+import { Buffer } from 'buffer';
 
 /** Modbus/RTU Client Response Handler
  * @extends ModbusClientResponseHandler

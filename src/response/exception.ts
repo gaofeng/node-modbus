@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import {
   ErrorCode,
   errorCodeToMessage,
@@ -5,9 +6,9 @@ import {
   FunctionCode,
   isFunctionCode
 } from '../codes'
-import ExceptionRequestBody from '../request/exception.js'
-import ModbusRequestBody from '../request/request-body.js'
-import ModbusResponseBody from './response-body.js'
+import ExceptionRequestBody from '../request/exception'
+import ModbusRequestBody from '../request/request-body'
+import ModbusResponseBody from './response-body'
 
 /** Modbus Excepiton Response Body
  * @extends ModbusResponseBody

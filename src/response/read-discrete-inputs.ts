@@ -1,9 +1,10 @@
-import BufferUtils from '../buffer-utils.js'
-import { FC } from '../codes/index.js'
-import { BooleanArray } from '../constants/index.js'
-import ReadDiscreteInputsRequestBody from '../request/read-discrete-inputs.js'
-import UserRequest from '../user-request.js'
-import ModbusReadResponseBody from './read-response-body.js'
+import { Buffer } from 'buffer'
+import BufferUtils from '../buffer-utils'
+import { FC } from '../codes/index'
+import { BooleanArray } from '../constants/index'
+import ReadDiscreteInputsRequestBody from '../request/read-discrete-inputs'
+import UserRequest from '../user-request'
+import ModbusReadResponseBody from './read-response-body'
 
 const {
   bufferToArrayStatus,

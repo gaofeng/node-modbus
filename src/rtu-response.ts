@@ -1,10 +1,11 @@
-import Debug = require('debug'); const debug = Debug('rtu-response')
-import CRC = require('crc')
-import ModbusAbstractResponse from './abstract-response.js'
-import { ModbusRequestBody } from './request/index.js'
-import ModbusResponseBody from './response/response-body.js'
-import ResponseFactory from './response/response-factory.js'
-import ModbusRTURequest from './rtu-request.js'
+import Debug from 'debug'; const debug = Debug('rtu-response')
+import CRC from 'crc'
+import ModbusAbstractResponse from './abstract-response'
+import { ModbusRequestBody } from './request/index'
+import ModbusResponseBody from './response/response-body'
+import ResponseFactory from './response/response-factory'
+import ModbusRTURequest from './rtu-request'
+import { Buffer } from 'buffer';
 
 export default class ModbusRTUResponse<ResBody extends ModbusResponseBody = ModbusResponseBody>
   extends ModbusAbstractResponse<ResBody> {

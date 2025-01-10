@@ -18,7 +18,7 @@
  *
  *  socket.connect(options)
  */
-import ModbusTCPClient from './modbus-tcp-client.js'
+import ModbusTCPClient from './modbus-tcp-client'
 
 /** module:jsmodbus.client.RTU
  * @example <caption>Create new Modbus/RTU Client.</caption>
@@ -28,13 +28,13 @@ import ModbusTCPClient from './modbus-tcp-client.js'
  * const client = new Modbus.client.TCP(socket, address)
  */
 
-import ModbusRTUClient from './modbus-rtu-client.js'
+import ModbusRTUClient from './modbus-rtu-client'
 
 /** module:jsmodbus.server.TCP */
-import ModbusTCPServer from './modbus-tcp-server.js'
+import ModbusTCPServer from './modbus-tcp-server'
 
 /** module:jsmodbus.server.RTU */
-import ModbusRTUServer from './modbus-rtu-server.js'
+import ModbusRTUServer from './modbus-rtu-server'
 
 import * as Codes from './codes'
 import * as Errors from './errors'
