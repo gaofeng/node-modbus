@@ -59,7 +59,7 @@ export default abstract class ModbusAbstractRequest<ReqBody extends ModbusReques
    */
   public abstract get byteCount (): number;
 
-  public static fromBuffer: ModbusAbstractRequestFromBuffer<any> = (buffer) => {
+  public static fromBuffer: ModbusAbstractRequestFromBuffer<any> = (buffer: Buffer) => {
     throw new TypeError('Cannot call from buffer from base abstract class')
   }
   protected abstract _body: ReqBody
