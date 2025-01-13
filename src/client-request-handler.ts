@@ -191,11 +191,13 @@ export default abstract class MBClientRequestHandler<S extends Stream.Duplex, Re
 
   protected _onClose () {
     this._state = 'offline'
-    this._currentRequest && this._currentRequest.reject(new UserRequestError({
-      err: OFFLINE,
-      message: 'connection to modbus server closed',
-      request: this._currentRequest.request
-    }))
+    if (this._currentRequest) {
+      this._currentRequest.reject(new UserRequestError({
+        err: OFFLINE,
+        message: 'connection to modbus server closed',
+        request: this._currentRequest.request
+      }))
+    }
     this._clearAllRequests()
   }
 
@@ -216,11 +218,13 @@ export default abstract class MBClientRequestHandler<S extends Stream.Duplex, Re
 
     if (this._state === 'offline') {
       debug('rejecting request immediatly, client offline')
-      this._currentRequest && this._currentRequest.reject(new UserRequestError({
-        err: OFFLINE,
-        message: 'no connection to modbus server',
-        request: this._currentRequest.request
-      }))
+      if (this._currentRequest) {
+        this._currentRequest.reject(new UserRequestError({
+          err: OFFLINE,
+          message: 'no connection to modbus server',
+          request: this._currentRequest.request
+        }))
+      }
       this._clearCurrentRequest()
       /* start next request */
       setTimeout(this._flush.bind(this), 0)
@@ -231,10 +235,12 @@ export default abstract class MBClientRequestHandler<S extends Stream.Duplex, Re
 
     debug('flushing new request', payload)
 
-    this._currentRequest && this._currentRequest.start(() => {
-      this._clearCurrentRequest()
-      this._flush()
-    })
+    if (this._currentRequest) {
+      this._currentRequest.start(() => {
+        this._clearCurrentRequest()
+        this._flush()
+      })
+    }
 
     this._socket.write(payload, (err) => {
       debug('request fully flushed, ( error:', err, ')')
