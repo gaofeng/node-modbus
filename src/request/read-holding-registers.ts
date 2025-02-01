@@ -11,6 +11,10 @@ export default class ReadHoldingRegistersRequestBody extends ModbusRequestBody {
   get start () {
     return this._start
   }
+  
+  get address () {
+    return this._start
+  }
 
   /** Quantity of registers. */
   get count () {

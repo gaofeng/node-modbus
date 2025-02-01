@@ -58,6 +58,7 @@ export default abstract class ModbusRequestBody {
    */
   abstract get name (): ModbusRequestTypeName;
 
+  abstract get address (): number
   /**
    * Returns the count of the quantity
    * of registers, coils, etc.

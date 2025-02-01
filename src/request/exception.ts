@@ -7,6 +7,9 @@ import ModbusRequestBody from './request-body'
  * @extends ModbusRequestBody
  */
 export default class ExceptionRequestBody extends ModbusRequestBody {
+  get address(): number {
+    return 0
+  }
 
   /** Address to be written */
   get code () {

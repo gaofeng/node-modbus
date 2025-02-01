@@ -12,6 +12,10 @@ export default class ReadCoilsRequestBody extends ModbusRequestBody {
     return this._start
   }
 
+  get address () {
+    return this._start
+  }
+
   /** Coil Quantity. */
   get count () {
     return this._count

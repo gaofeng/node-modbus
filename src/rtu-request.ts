@@ -61,8 +61,7 @@ export default class ModbusRTURequest<ReqBody extends ModbusRequestBody = Modbus
 
       const address = buffer.readUInt8(0)
 
-      debug(`rtu header complete, address, ${address}`)
-      debug('buffer', buffer)
+      debug(`rtu header address, ${address}`)
 
       // NOTE: This is potentially more than the body; the body length isn't know at this point...
       const body = RequestFactory.fromBuffer(buffer.slice(1))
@@ -110,5 +109,9 @@ export default class ModbusRTURequest<ReqBody extends ModbusRequestBody = Modbus
     const payload = Buffer.concat([idBuf, bodyPayload, crBu])
 
     return payload
+  }
+
+  public toString() {
+    return `RTU Request: id: ${this.address}, ${this.body.name},address: ${this.body.address},count: ${this.body.count}`
   }
 }
