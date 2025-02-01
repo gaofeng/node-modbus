@@ -1,7 +1,7 @@
 
 import Debug from 'debug';
 const debug = Debug('modbus-server-client')
-import * as Stream from 'stream'
+import { DuplexStream } from './DuplexStream'
 import { ModbusAbstractRequestFromBuffer } from './abstract-request'
 import { ModbusAbstractResponseFromRequest } from './abstract-response'
 import ModbusServerRequestHandler from './modbus-server-request-handler'
@@ -10,7 +10,7 @@ import ModbusServer from './modbus-server'
 import { Buffer } from 'buffer';
 
 export default class ModbusServerClient<
-  S extends Stream.Duplex,
+  S extends DuplexStream,
   ReqFromBufferMethod extends ModbusAbstractRequestFromBuffer,
   ResFromRequestMethod extends ModbusAbstractResponseFromRequest> {
   public _server: ModbusServer

@@ -4,11 +4,11 @@ import ModbusTCPResponse from './tcp-response'
 
 import Debug from 'debug';
 const debug = Debug('tcp-client-request-handler')
-import { Socket } from 'net'
 import MBClientRequestHandler from './client-request-handler'
 import ModbusTCPRequest from './tcp-request'
 import UserRequest from './user-request'
 import { UserRequestError } from './user-request-error'
+import { DuplexStream } from './DuplexStream';
 
 const OUT_OF_SYNC = 'OutOfSync'
 const PROTOCOL = 'Protocol'
@@ -18,7 +18,7 @@ const PROTOCOL = 'Protocol'
  * @extends MBClientRequestHandler
  * @class
  */
-export default class ModbusTCPClientRequestHandler extends MBClientRequestHandler<Socket, ModbusTCPRequest> {
+export default class ModbusTCPClientRequestHandler extends MBClientRequestHandler<DuplexStream, ModbusTCPRequest> {
   protected _requests: Array<UserRequest<ModbusTCPRequest>>
   protected _currentRequest: UserRequest<ModbusTCPRequest> | null | undefined
   private _requestId: number
@@ -31,7 +31,7 @@ export default class ModbusTCPClientRequestHandler extends MBClientRequestHandle
    * @param {number} [timeout=5000] Timeout in ms for requests
    * @memberof ModbusTCPClientRequestHandler
    */
-  constructor (socket: Socket, unitId: number, timeout: number = 5000) {
+  constructor (socket: DuplexStream, unitId: number, timeout: number = 5000) {
     super(socket, timeout)
     this._requestId = 0
     this._unitId = unitId

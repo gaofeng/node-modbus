@@ -89,3 +89,5 @@ export {
   ModbusTCPServer,
   ModbusRTUServer
 }
+
+export { DuplexStream } from './DuplexStream'

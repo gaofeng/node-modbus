@@ -52,7 +52,7 @@ export default class ModbusRTURequest<ReqBody extends ModbusRequestBody = Modbus
    * @param {Buffer} buffer
    * @return  A new Modbus RTU Request or null.
    */
-  public static fromBuffer (buffer: Buffer) {
+  public static fromBuffer (buffer: Buffer): ModbusRTURequest | null {
     try {
       if (buffer.length < 1 /* address */ + 2 /* CRC */) {
         debug('not enough data in the buffer yet')

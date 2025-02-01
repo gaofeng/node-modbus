@@ -1,7 +1,6 @@
 
 import Debug from 'debug'; const debug = Debug('rtu-client-request-handler')
 import CRC from 'crc'
-import { SerialPort as SerialSocket } from 'serialport'
 import MBClientRequestHandler from './client-request-handler'
 import ModbusRequestBody from './request/request-body'
 import ModbusRTURequest from './rtu-request'
@@ -9,13 +8,14 @@ import ModbusRTUResponse from './rtu-response'
 import { UserRequestError } from './user-request-error'
 import UserRequest from './user-request'
 import { Buffer } from 'buffer';
+import { DuplexStream } from './DuplexStream';
 
 /** Modbus/RTU Client Request Handler
  * Implements behaviour for Client Requests for Modbus/RTU
  * @extends MBClientRequestHandler
  * @class
  */
-export default class ModbusRTUClientRequestHandler extends MBClientRequestHandler<SerialSocket, ModbusRTURequest> {
+export default class ModbusRTUClientRequestHandler extends MBClientRequestHandler<DuplexStream, ModbusRTURequest> {
   protected _requests: Array<UserRequest<ModbusRTURequest>>
   protected _currentRequest: UserRequest<ModbusRTURequest> | null | undefined
   protected readonly _address: number
@@ -27,7 +27,7 @@ export default class ModbusRTUClientRequestHandler extends MBClientRequestHandle
    * @param {number} [timeout=5000]
    * @memberof ModbusRTUClientRequestHandler
    */
-  constructor (socket: SerialSocket, address: number, timeout: number = 5000) {
+  constructor (socket: DuplexStream, address: number, timeout: number = 5000) {
     super(socket, timeout)
     this._address = address
     this._requests = []

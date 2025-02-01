@@ -5,7 +5,7 @@ const MANUALLY_CLEARED = 'ManuallyCleared'
 
 import Debug from 'debug';
 const debug = Debug('client-request-handler')
-import * as Stream from 'stream'
+import {DuplexStream} from './DuplexStream'
 import ModbusAbstractRequest from './abstract-request'
 import ModbusAbstractResponse from './abstract-response'
 import { ModbusRequestBody } from './request'
@@ -17,7 +17,7 @@ import UserRequest, { PromiseUserRequest } from './user-request'
 /** Common Request Handler
  * @abstract
  */
-export default abstract class MBClientRequestHandler<S extends Stream.Duplex, Req extends ModbusAbstractRequest> {
+export default abstract class MBClientRequestHandler<S extends DuplexStream, Req extends ModbusAbstractRequest> {
 
   public get state () {
     return this._state
@@ -230,20 +230,17 @@ export default abstract class MBClientRequestHandler<S extends Stream.Duplex, Re
       setTimeout(this._flush.bind(this), 0)
       return
     }
-
-    const payload = this._currentRequest && this._currentRequest.createPayload()
-
-    debug('flushing new request', payload)
-
     if (this._currentRequest) {
       this._currentRequest.start(() => {
         this._clearCurrentRequest()
         this._flush()
       })
-    }
+      const payload = this._currentRequest.createPayload()
 
-    this._socket.write(payload, (err) => {
-      debug('request fully flushed, ( error:', err, ')')
-    })
+      debug('flushing new request', payload)
+      this._socket.write(payload, (err) => {
+        debug('request fully flushed, ( error:', err, ')')
+      })
+    }
   }
 }

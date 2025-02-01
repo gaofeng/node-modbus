@@ -1,7 +1,7 @@
 import Debug from 'debug';
 const debug = Debug('modbus-client')
 
-import * as Stream from 'stream'
+import { DuplexStream } from './DuplexStream';
 
 import {
   ReadCoilsRequestBody,
@@ -29,7 +29,7 @@ import { Buffer } from 'buffer';
 /** Common Modbus Client
  * @abstract
  */
-export default abstract class MBClient<S extends Stream.Duplex, Req extends ModbusAbstractRequest> {
+export default abstract class MBClient<S extends DuplexStream, Req extends ModbusAbstractRequest> {
 
   public abstract get slaveId (): number;
   public abstract get unitId (): number;

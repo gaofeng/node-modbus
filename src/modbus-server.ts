@@ -1,9 +1,9 @@
 import { EventEmitter } from 'eventemitter3';
-import { Socket } from 'net'
 import ModbusAbstractRequest from './abstract-request'
 import { BooleanArray } from './constants'
 import ModbusServerClient from './modbus-server-client'
 import { Buffer } from 'buffer'
+import { DuplexStream } from './DuplexStream';
 
 type AbstractRequest = ModbusAbstractRequest
 
@@ -95,7 +95,7 @@ export default class ModbusServer extends EventEmitter {
   public on (event: 'writeMultipleRegisters', listener: (holdingRegisters: Buffer) => void): this
   public on (event: 'postWriteMultipleRegisters', listener: (holdingRegisters: Buffer) => void): this
   public on (event: 'postWriteMultipleRegisters', listener: (request: AbstractRequest, cb: BufferCB) => void): this
-  public on (event: 'connection', listener: (socket: Socket) => void): this
+  public on (event: 'connection', listener: (socket: DuplexStream) => void): this
   public on (event: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(event, listener)
   }

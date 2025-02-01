@@ -3,9 +3,9 @@ import MBClient from './modbus-client'
 import ModbusRTUClientRequestHandler from './rtu-client-request-handler'
 import ModbusRTUClientResponseHandler from './rtu-client-response-handler'
 
-import {SerialPort} from 'serialport'
 import ModbusRTURequest from './rtu-request'
 // import ModbusRTUResponse from './rtu-response'
+import { DuplexStream } from './DuplexStream'
 
 /** This Client musst be initiated with a socket object that implements the event emitter
  * interface and fires a 'data' event with a buffer as a parameter. It also needs to
@@ -20,7 +20,7 @@ import ModbusRTURequest from './rtu-request'
  * @extends MBClient
  * @class
  */
-export default class ModbusRTUClient extends MBClient<SerialPort, ModbusRTURequest> {
+export default class ModbusRTUClient extends MBClient<DuplexStream, ModbusRTURequest> {
   protected _requestHandler: ModbusRTUClientRequestHandler
   protected _responseHandler: ModbusRTUClientResponseHandler
 
@@ -29,7 +29,7 @@ export default class ModbusRTUClient extends MBClient<SerialPort, ModbusRTUReque
    * @param {number} address The address of the serial client.
    * @param {number} [timeout=5000]
    */
-  constructor (socket: SerialPort, address: number, timeout = 5000) {
+  constructor (socket: DuplexStream, address: number, timeout = 5000) {
     super(socket)
 
     this._requestHandler = new ModbusRTUClientRequestHandler(socket, address, timeout)
