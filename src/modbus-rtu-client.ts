@@ -7,7 +7,7 @@ import ModbusRTURequest from './rtu-request'
 // import ModbusRTUResponse from './rtu-response'
 import { DuplexStream } from './DuplexStream'
 
-/** This Client musst be initiated with a socket object that implements the event emitter
+/** This Client must be initiated with a socket object that implements the event emitter
  * interface and fires a 'data' event with a buffer as a parameter. It also needs to
  * implement the 'write' method to send data to the socket.
  *
