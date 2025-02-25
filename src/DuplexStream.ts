@@ -9,11 +9,9 @@ import { EventEmitter } from 'eventemitter3';
  * implement the 'write' method to send data to the socket.
  */
 export abstract class DuplexStream extends EventEmitter {
-  constructor() {
-    super();
-  }
-
   public isOpen: boolean = false;
 
+  abstract open(): void;
+  abstract close(): void;
   abstract write(chunk: Buffer, callback?: (error?: Error | null) => void): boolean;
 }

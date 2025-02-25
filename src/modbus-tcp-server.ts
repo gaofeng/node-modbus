@@ -4,11 +4,12 @@ import ModbusServerClient from './modbus-server-client'
 import ModbusTCPRequest from './tcp-request'
 import ModbusTCPResponse from './tcp-response'
 import { DuplexStream } from './DuplexStream';
+import { DuplexServer } from './DuplexServer';
 
 export default class ModbusTCPServer extends ModbusServer {
-  public _server: ModbusServer
+  public _server: DuplexServer
 
-  constructor (server: ModbusServer, options?: Partial<IModbusServerOptions>) {
+  constructor (server: DuplexServer, options?: Partial<IModbusServerOptions>) {
     super(options)
     this._server = server
 

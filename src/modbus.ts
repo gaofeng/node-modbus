@@ -91,3 +91,4 @@ export {
 }
 
 export { DuplexStream } from './DuplexStream'
+export { DuplexServer } from './DuplexServer'
