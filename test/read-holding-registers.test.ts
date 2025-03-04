@@ -1,0 +1,56 @@
+import assert from 'node:assert/strict';
+import ReadHoldingRegistersRequestBody from "../src/request/read-holding-registers"
+import ReadHoldingRegistersResponseBody from "../src/response/read-holding-registers"
+
+describe('ReadHoldingRegisters Tests.', function () {
+  describe('ReadHoldingRegisters Response', function () {
+    it('should create a response from request and buffer', function () {
+      // read holding, address 0,count 1
+      const request = new ReadHoldingRegistersRequestBody(0, 1)
+      const holdingRegisters = Buffer.from([0x01, 0x00, 0x02, 0x00, 0xFF, 0xFF])
+      const response = ReadHoldingRegistersResponseBody.fromRequest(request, holdingRegisters)
+      const respPayload = response.createPayload()
+      // fc=0x03, byteCount=0x02, data high byte=0x01, data low byte=0x00
+      const expected = Buffer.from([0x03, 0x02, 0x01, 0x00])
+
+      assert.deepEqual(respPayload, expected)
+    })
+    it('should create a response with constructor from array', function () {
+      const response = new ReadHoldingRegistersResponseBody(6, [0x01, 0x02, 0xFFFE])
+      const respPayload = response.createPayload()
+      const expected = Buffer.from([0x03, 0x06, 0x00, 0x01, 0x00, 0x02, 0xFF, 0xFE])
+
+      assert.deepEqual(respPayload, expected)
+    })
+  })
+  describe('ReadHoldingRegisters Request', function () {
+    it('should create a buffer from a read holding registers message', function () {
+      const request = new ReadHoldingRegistersRequestBody(22, 33)
+      const buffer = request.createPayload()
+      const expected = Buffer.from([0x03, 0x00, 0x16, 0x00, 0x21])
+
+      assert.deepEqual(expected, buffer)
+    })
+    it('should create a message from a buffer', function () {
+      const buffer = Buffer.from([0x03, 0x00, 0x16, 0x00, 0x21])
+      const message = ReadHoldingRegistersRequestBody.fromBuffer(buffer)
+
+      assert.ok(message !== null)
+      assert.equal(0x03, message.fc)
+      assert.equal(22, message.start)
+      assert.equal(33, message.count)
+    })
+    it('should return null on not enough buffer data', function () {
+      const buffer = Buffer.from([0x03, 0x00])
+      const message = ReadHoldingRegistersRequestBody.fromBuffer(buffer)
+
+      assert.ok(message === null)
+    })
+    it('should return null on wrong function code', function () {
+      const buffer = Buffer.from([0x04, 0x00, 0x0a, 0x00, 0x0c])
+      const message = ReadHoldingRegistersRequestBody.fromBuffer(buffer)
+
+      assert.ok(message === null)
+    })
+  })
+})

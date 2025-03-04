@@ -1,2 +1,5 @@
 {
+  "mochaExplorer.env": {
+    "DEBUG": "*"
+  }
 }

@@ -5,6 +5,7 @@ import { FC } from '../codes'
 import ReadHoldingRegistersRequestBody from '../request/read-holding-registers'
 import ModbusReadResponseBody from './read-response-body'
 import { Buffer } from 'buffer';
+import assert from 'assert';
 
 /** Read Holding Registers ResponseBody (Function Code 0x03)
  * @extends ModbusResponseBody
@@ -37,13 +38,13 @@ export default class ReadHoldingRegistersResponseBody extends ModbusReadResponse
    * @param {Buffer} holdingRegisters
    * @returns ReadHoldingRegistersResponseBody
    */
-  public static fromRequest (requestBody: ReadHoldingRegistersRequestBody, holdingRegisters: Buffer) {
+  public static fromRequest (requestBody: ReadHoldingRegistersRequestBody, holdingRegisters: Buffer): ReadHoldingRegistersResponseBody {
     const startByte = requestBody.start * 2
     const endByte = (requestBody.start * 2) + (requestBody.count * 2)
 
+    /* check wheather holdingRegisters is big enough for this request */
+    assert(holdingRegisters.length >= endByte, "Buffer size assertion failed");
     const bufferSegment = holdingRegisters.slice(startByte, endByte)
-
-    /* TODO: check wheather holdingRegisters is big enough for this request */
 
     return new ReadHoldingRegistersResponseBody(bufferSegment.length, bufferSegment)
   }

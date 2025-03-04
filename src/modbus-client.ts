@@ -279,13 +279,16 @@ export default abstract class MBClient<S extends DuplexStream, Req extends Modbu
 
       if (values instanceof Buffer) {
         request = new WriteMultipleCoilsRequestBody(start, values, quantity)
-      } else {
+      } else if (values instanceof Array) {
         request = new WriteMultipleCoilsRequestBody(start, values)
       }
 
     } catch (e) {
       debug('unknown request error occurred')
       return Promise.reject(e)
+    }
+    if (!request) {
+      return Promise.reject(new Error('Invalid request'))
     }
 
     return this._requestHandler.register(request)
@@ -351,19 +354,14 @@ export default abstract class MBClient<S extends DuplexStream, Req extends Modbu
 
     /* get latest message from message handler */
 
-    do {
-      const response = this._responseHandler.shift()
-
-      /* no message was parsed by now, come back later */
-      if (!response) {
-        return
-      }
+    let response;
+    while ((response = this._responseHandler.shift()) !== undefined) {
 
       /* process the response in the request handler if unitId is a match */
       if (this.unitId === response.unitId) {
         this._requestHandler.handle(response) // TODO: Find a better way than overwriting the type as any
       }
-    } while (1)
+    }
   }
 
 }

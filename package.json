@@ -3,8 +3,8 @@
   "version": "4.1.0",
   "description": "Implementation for the Serial/TCP Modbus protocol.",
   "author": "Stefan Poeter <stefan.poeter@cloud-automation.de>",
-  "main": "./dist/modbus.js",
-  "types": "./dist/modbus.d.ts",
+  "main": "./dist/src/modbus.js",
+  "types": "./dist/src/modbus.d.ts",
   "bin": {
     "jsmodbus": "./bin/jsmodbus.js"
   },
@@ -23,10 +23,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@types/crc": "^3.4.0",
     "@types/debug": "^4.1.12",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^12.0.10",
+    "@types/node": "^22.13.8",
     "commander": "^3.0.2",
     "eslint": "^9.17.0",
     "mocha": "^11.1.0",
