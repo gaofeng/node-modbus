@@ -1,12 +1,10 @@
-'use strict'
-
-/* global describe, it, beforeEach */
-
-const assert = require('assert')
-const ModbusRTUClientResponseHandler = require('../dist/rtu-client-response-handler.js').default
+import assert from 'node:assert/strict'
+import ModbusRTUClientResponseHandler from '../src/rtu-client-response-handler'
+import ModbusRTUResponse from '../src/rtu-response'
+import { ExceptionResponseBody, ReadCoilsResponseBody } from '../src/response'
 
 describe('Modbus/RTU Client Response Tests', function () {
-  let handler
+  let handler:ModbusRTUClientResponseHandler
 
   beforeEach(function () {
     handler = new ModbusRTUClientResponseHandler()
@@ -25,16 +23,18 @@ describe('Modbus/RTU Client Response Tests', function () {
 
     handler.handleData(responseBuffer)
 
-    const response = handler.shift()
+    var response = handler.shift()
 
-    assert.ok(response !== null)
+    assert.ok(response !== undefined)
+    response = response as ModbusRTUResponse<ReadCoilsResponseBody>
     assert.equal(1, response.address)
     assert.equal(1, response.body.fc)
     assert.equal(0xABCD, response.crc)
     assert.equal(7, response.byteCount)
 
     assert.equal(1, response.body.fc)
-    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], response.body.valuesAsArray)
+    const body = response.body as ReadCoilsResponseBody
+    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], body.valuesAsArray)
   })
   it('should handle a exception', function () {
     const responseBuffer = Buffer.from([
@@ -51,8 +51,9 @@ describe('Modbus/RTU Client Response Tests', function () {
     assert.ok(response !== undefined)
     assert.equal(0x01, response.address)
     assert.equal(0x01, response.body.fc)
-    assert.equal(0x01, response.body.code)
-    assert.equal('ILLEGAL FUNCTION', response.body.message)
+    const body = response.body as ExceptionResponseBody
+    assert.equal(0x01, body.code)
+    assert.equal('ILLEGAL FUNCTION', body.message)
   })
   it('should handle a chopped response', function () {
     const responseBufferA = Buffer.from([
@@ -79,6 +80,7 @@ describe('Modbus/RTU Client Response Tests', function () {
     assert.ok(response !== undefined)
     assert.equal(1, response.address)
     assert.equal(1, response.body.fc)
-    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], response.body.valuesAsArray)
+    const body = response.body as ReadCoilsResponseBody
+    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], body.valuesAsArray)
   })
 })

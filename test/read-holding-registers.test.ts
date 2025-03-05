@@ -15,6 +15,14 @@ describe('ReadHoldingRegisters Tests.', function () {
 
       assert.deepEqual(respPayload, expected)
     })
+    it('should assert error when create a response from request and small buffer', function () {
+      // read holding, address 0,count 1
+      const request = new ReadHoldingRegistersRequestBody(0, 3)
+      const holdingRegisters = Buffer.from([0x01, 0x00, 0x02, 0x00])
+      assert.throws(() => {
+        ReadHoldingRegistersResponseBody.fromRequest(request, holdingRegisters)
+      }, assert.AssertionError, 'Not enough data in buffer')
+    })
     it('should create a response with constructor from array', function () {
       const response = new ReadHoldingRegistersResponseBody(6, [0x01, 0x02, 0xFFFE])
       const respPayload = response.createPayload()

@@ -43,8 +43,8 @@ export default class ReadHoldingRegistersResponseBody extends ModbusReadResponse
     const endByte = (requestBody.start * 2) + (requestBody.count * 2)
 
     /* check wheather holdingRegisters is big enough for this request */
-    assert(holdingRegisters.length >= endByte, "Buffer size assertion failed");
-    const bufferSegment = holdingRegisters.slice(startByte, endByte)
+    assert(holdingRegisters.length >= endByte, "Not enough data in buffer");
+    const bufferSegment = holdingRegisters.subarray(startByte, endByte)
 
     return new ReadHoldingRegistersResponseBody(bufferSegment.length, bufferSegment)
   }

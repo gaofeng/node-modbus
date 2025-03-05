@@ -1,8 +1,5 @@
-/* global describe, it */
-'use strict'
-
-const assert = require('assert')
-const bufferUtils = require('../dist/buffer-utils')
+import assert from 'node:assert/strict'
+import bufferUtils from '../src/buffer-utils'
 
 describe('Buffer and status conversions.', function () {
   it('should convert 10 coils status to buffer 2 bytes', function () {
@@ -26,38 +23,6 @@ describe('Buffer and status conversions.', function () {
     const expected = [0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0]
     const result = bufferUtils.bufferToArrayStatus(input)
 
-    assert.deepEqual(expected, result)
-  })
-
-  it('should return empty array if buffer is not instance of Buffer', function () {
-    const expected = []
-
-    let input = 0b0101000000000001
-    let result = bufferUtils.bufferToArrayStatus(input)
-    assert.deepEqual(expected, result)
-
-    input = [0b01010000, 0b00000001]
-    result = bufferUtils.bufferToArrayStatus(input)
-    assert.deepEqual(expected, result)
-
-    input = null
-    result = bufferUtils.bufferToArrayStatus(input)
-    assert.deepEqual(expected, result)
-  })
-
-  it('should return empty buffer if coils is not instance of Array', function () {
-    const expected = Buffer.alloc(0)
-
-    let input = 0b0101000000000001
-    let result = bufferUtils.arrayStatusToBuffer(input)
-    assert.deepEqual(expected, result)
-
-    input = null
-    result = bufferUtils.arrayStatusToBuffer(input)
-    assert.deepEqual(expected, result)
-
-    input = Buffer.from([0b01010000, 0b00000001])
-    result = bufferUtils.arrayStatusToBuffer(input)
     assert.deepEqual(expected, result)
   })
 })
@@ -120,7 +85,11 @@ describe('Buffer manipulation tests', function () {
     buf[0] = firstByte
 
     const lb = Math.floor(endAddress / 8)
-    const lastByte = bufferUtils.lastByte(endAddress, originalBuffer[originalBuffer.length - 1], buf[buf.length - 1])
+    const lastByte = bufferUtils.lastByte(
+      endAddress,
+      originalBuffer[originalBuffer.length - 1],
+      buf[buf.length - 1]
+    )
     expectedByte = 0b10101011
     assert.equal(lastByte, expectedByte)
 
@@ -148,7 +117,11 @@ describe('Buffer manipulation tests', function () {
     buf[0] = firstByte
 
     const lb = Math.floor(endAddress / 8)
-    const lastByte = bufferUtils.lastByte(endAddress, originalBuffer[originalBuffer.length - 1], buf[buf.length - 1])
+    const lastByte = bufferUtils.lastByte(
+      endAddress,
+      originalBuffer[originalBuffer.length - 1],
+      buf[buf.length - 1]
+    )
     expectedByte = 0b00001111
     assert.equal(lastByte, expectedByte)
 

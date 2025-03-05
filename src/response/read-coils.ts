@@ -46,7 +46,7 @@ export default class ReadCoilsResponseBody extends ModbusReadResponseBody {
    * @param {Buffer} coils
    * @returns {ReadCoilsResponseBody}
    */
-  public static fromRequest (requestBody: ReadCoilsRequestBody, coils: Buffer) {
+  public static fromRequest (requestBody: ReadCoilsRequestBody, coils: Buffer): ReadCoilsResponseBody {
     const coilsStatus = bufferToArrayStatus(coils)
 
     const start = requestBody.start
@@ -60,13 +60,13 @@ export default class ReadCoilsResponseBody extends ModbusReadResponseBody {
 
   /** Create ReadCoilsResponseBody from buffer.
    * @param {Buffer} buffer
-   * @returns {ReadCoilsResponseBody} Returns Null of not enough data located in the buffer.
+   * @returns {ReadCoilsResponseBody | null} Returns Null of not enough data located in the buffer.
    */
-  public static fromBuffer (buffer: Buffer) {
+  public static fromBuffer (buffer: Buffer): ReadCoilsResponseBody | null{
     try {
       const fc = buffer.readUInt8(0)
       const byteCount = buffer.readUInt8(1)
-      const coilStatus = buffer.slice(2, 2 + byteCount)
+      const coilStatus = buffer.subarray(2, 2 + byteCount)
 
       if (coilStatus.length !== byteCount) {
         return null

@@ -62,8 +62,8 @@ export { default as ModbusAbstractResponse } from './abstract-response'
 export { default as MBClientRequestHandler } from './client-request-handler'
 export { default as ModbusClientResponseHandler } from './client-response-handler'
 export { default as ModbusClient } from './modbus-client'
-export { default as ModbusServerClient } from './modbus-server-client.js'
-export { BufferCB } from './modbus-server'
+export { default as ModbusServerClient } from './modbus-server-client'
+export type { BufferCB } from './modbus-server'
 export * from './request-response-map'
 export { default as ModbusTCPRequest } from './tcp-request'
 export { default as ModbusTCPResponse } from './tcp-response'
@@ -72,16 +72,16 @@ export { default as ModbusRTUResponse } from './rtu-response'
 export { UserRequestError } from './user-request-error'
 export {
   default as UserRequest,
-  ModbusRequest,
-  IUserRequestResolve as UserRequestResolve,
-  PromiseUserRequest
+  type ModbusRequest,
+  type IUserRequestResolve as UserRequestResolve,
+  type PromiseUserRequest
 } from './user-request'
 export {
   UserRequestMetrics
 } from './user-request-metrics'
 
-export { ModbusAbstractRequestFromBuffer } from './abstract-request'
-export { ModbusAbstractResponseFromRequest } from './abstract-response'
+export type { ModbusAbstractRequestFromBuffer } from './abstract-request'
+export type { ModbusAbstractResponseFromRequest } from './abstract-response'
 
 export {
   ModbusTCPClient,

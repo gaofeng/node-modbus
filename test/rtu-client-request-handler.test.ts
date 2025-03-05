@@ -1,33 +1,43 @@
-'use strict'
+import assert from 'node:assert/strict'
+import * as sinon from 'sinon'
+import ReadCoilsRequest from '../src/request/read-holding-registers'
+import ReadHoldingRegistersResponseBody from '../src/response/read-holding-registers'
+import ReadHoldingRegistersRequestBody from '../src/request/read-holding-registers'
+import ModbusRTUResponse from '../src/rtu-response'
+import ExceptionResponse from '../src/response/exception'
+import ModbusRTUClientRequestHandler from '../src/rtu-client-request-handler'
+import * as Modbus from '../src/modbus'
+import { DuplexStream } from '../src/modbus'
 
-/* global describe, it, beforeEach */
-const assert = require('assert')
-const sinon = require('sinon')
-const EventEmitter = require('events')
-const ReadCoilsRequest = require('../dist/request/read-holding-registers.js').default
-const ReadHoldingRegistersResponseBody = require('../dist/response/read-holding-registers.js').default
-const ReadHoldingRegistersRequestBody = require('../dist/request/read-holding-registers.js').default
-const ModbusRTUResponse = require('../dist/rtu-response.js').default
-const ExceptionResponse = require('../dist/response/exception.js').default
-const ModbusRTUClientRequestHandler = require('../dist/rtu-client-request-handler.js').default
-const Modbus = require('../dist/modbus.js')
+class DuplexStreamMock extends DuplexStream {
+  open(): void {
+    console.log('open')
+  }
+  close(): void {
+    console.log('close')
+  }
+  write(chunk: Buffer, callback?: (error?: Error | null) => void): boolean {
+    return true
+  }
+}
 
+describe('Modbus/RTU Client Request Tests', () => {
+  let socket: DuplexStreamMock
+  let socketMock: sinon.SinonMock
 
-describe('Modbus/RTU Client Request Tests', function () {
-  let socket
-  let socketMock
-
-  beforeEach(function () {
-    socket = new EventEmitter()
-    socket.write = function () {}
-
+  beforeEach(() => {
+    socket = new DuplexStreamMock()
     socketMock = sinon.mock(socket)
   })
 
-  /* we are using the read coils function to test the rtu request specifics */
-  describe('Register Test.', function () {
-    it('should register an rtu request', function () {
-      const handler = new ModbusRTUClientRequestHandler(socket, 4)
+  afterEach(() => {
+    // Restore the default sandbox here
+    sinon.restore()
+  })
+
+  describe('Register Test.', () => {
+    it('should register an rtu request', () => {
+      const handler = new ModbusRTUClientRequestHandler(socket, 4, 2000)
       const readCoilsRequest = new ReadCoilsRequest(0x4321, 0x0120)
 
       socket.emit('open')
@@ -42,31 +52,34 @@ describe('Modbus/RTU Client Request Tests', function () {
     })
   })
 
-  describe('Handle Data Tests.', function () {
-    it('should register an rtu request and handle a response', function (done) {
+  describe('Handle Data Tests.', () => {
+    it('should register an rtu request and handle a response', (done) => {
       const handler = new ModbusRTUClientRequestHandler(socket, 1)
       const request = new ReadHoldingRegistersRequestBody(0, 1)
       const response = new ReadHoldingRegistersResponseBody(1, Buffer.from([0x00, 0x32]))
-      const rtuResponse = new ModbusRTUResponse(1, 0x91C9, response)
+      const rtuResponse = new ModbusRTUResponse(1, 0x91c9, response)
 
       socket.emit('open')
 
       socketMock.expects('write').once()
 
-      handler.register(request)
-        .then(function (resp) {
+      handler
+        .register(request)
+        .then((resp: any) => {
           assert.ok(true)
           socketMock.verify()
 
           done()
-        }).catch(function () {
+        })
+        .catch(() => {
           assert.ok(false)
           done()
         })
 
       handler.handle(rtuResponse)
     })
-    it('should register an rtu request and handle a exception response', function (done) {
+
+    it('should register an rtu request and handle a exception response', (done) => {
       const handler = new ModbusRTUClientRequestHandler(socket, 4)
       const request = new ReadCoilsRequest(0x0000, 0x0008)
       const response = new ExceptionResponse(0x01, 0x01)
@@ -76,12 +89,13 @@ describe('Modbus/RTU Client Request Tests', function () {
 
       socketMock.expects('write').once()
 
-      handler.register(request)
-        .then(function (resp) {
+      handler
+        .register(request)
+        .then((resp: any) => {
           assert.ok(false)
-
           done()
-        }).catch(function (err) {
+        })
+        .catch((err: any) => {
           // Exception type should be ModbusException not crcMismatch or any other
           assert.equal(err.err, 'ModbusException')
           assert.equal(err.request instanceof Modbus.ModbusRTURequest, true)
@@ -94,14 +108,15 @@ describe('Modbus/RTU Client Request Tests', function () {
       handler.handle(rtuResponse)
     })
 
-    it('should calculate exception response crc correctly', function (done) {
+    it('should calculate exception response crc correctly', (done) => {
       const handler = new ModbusRTUClientRequestHandler(socket, 1)
       const request = new ReadHoldingRegistersRequestBody(0x4000, 0x0002)
       const responseBuffer = Buffer.from([
-        0x01,       // address
-        0x83,       // fc
-        0x02,       // error code
-        0xc0, 0xf1  // crc
+        0x01, // address
+        0x83, // fc
+        0x02, // error code
+        0xc0,
+        0xf1 // crc
       ])
       const rtuResponse = ModbusRTUResponse.fromBuffer(responseBuffer)
 
@@ -109,12 +124,13 @@ describe('Modbus/RTU Client Request Tests', function () {
 
       socketMock.expects('write').once()
 
-      handler.register(request)
-        .then(function (resp) {
+      handler
+        .register(request)
+        .then((resp: any) => {
           assert.ok(false)
-
           done()
-        }).catch(function (err) {
+        })
+        .catch((err: any) => {
           // Exception type should be ModbusException not crcMismatch or any other
           assert.equal(err.err, 'ModbusException')
           assert.equal(err.request instanceof Modbus.ModbusRTURequest, true)
@@ -124,9 +140,9 @@ describe('Modbus/RTU Client Request Tests', function () {
           done()
         })
 
-      handler.handle(rtuResponse)
-      // rtuResponse.crc
-
+      if (rtuResponse) {
+        handler.handle(rtuResponse)
+      }
     })
   })
 })

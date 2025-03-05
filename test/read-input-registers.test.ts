@@ -1,10 +1,6 @@
-'use strict'
-
-/* global describe, it */
-
-const assert = require('assert')
-const ReadInputRegistersRequest = require('../dist/request/read-input-registers.js').default
-const ReadInputRegistersResponse = require('../dist/response/read-input-registers.js').default
+import assert from 'node:assert/strict'
+import ReadInputRegistersRequest from "../src/request/read-input-registers"
+import ReadInputRegistersResponse from "../src/response/read-input-registers"
 
 describe('ReadInputRegisters Tests.', function () {
   describe('ReadInputRegisters Response', function () {
