@@ -48,13 +48,18 @@ export default class ModbusServerClient<
     let request;
     do {
       request = this._requestHandler.shift()
-
+      //check id
       if (request) {
-        this._responseHandler.handle(request, (response) => {
-          this._socket.write(response, () => {
-            debug('response flushed', response)
+        if (this.server.id && this.server.id != request.address) {
+          debug('id mismatch', this.server.id, request.address)
+        }
+        else {
+          this._responseHandler.handle(request, (response) => {
+            this._socket.write(response, () => {
+              debug('response flushed', response)
+            })
           })
-        })
+        }
       }
     } while (request != null)
     /* TODO: close client connection */

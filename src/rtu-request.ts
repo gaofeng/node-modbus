@@ -115,6 +115,6 @@ export default class ModbusRTURequest<ReqBody extends ModbusRequestBody = Modbus
   }
 
   public toString() {
-    return `RTU Request: id: ${this.address}, ${this.body.name},address: ${this.body.address},count: ${this.body.count}`
+    return `RTU Request: id: ${this.address}, ${this.name},address: ${this.body.address},count: ${this.body.count}`
   }
 }

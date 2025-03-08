@@ -23,6 +23,7 @@ describe('RTU Server Tests.', function () {
     socket = new DuplexStreamMock()
 
     server = new Modbus.server.RTU(socket, {
+      id: 2,
       holding: Buffer.alloc(12, 0x00),
       coils: Buffer.from([0x55, 0x55, 0x55])
     })

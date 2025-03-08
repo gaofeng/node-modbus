@@ -27,7 +27,7 @@ import {
 } from './request'
 
 import ModbusAbstractRequest from './abstract-request'
-import { ModbusAbstractResponseFromRequest } from './abstract-response'
+import ModbusAbstractResponse, { ModbusAbstractResponseFromRequest } from './abstract-response'
 import BufferUtils from './buffer-utils'
 import { FC, isFunctionCode } from './codes'
 
@@ -48,7 +48,13 @@ export default class ModbusServerResponseHandler<FR extends ModbusAbstractRespon
     this._fromRequest = fromRequest
   }
 
-  public handle (request: ModbusAbstractRequest, cb: (buffer: Buffer) => void) {
+  /**
+   * Handle a Modbus request and compose the response.
+   * @param request - The request to handle
+   * @param cb - The callback to call with the response payload to send
+   * @returns The response to send or null if no response, not used for now.
+   */
+  public handle (request: ModbusAbstractRequest, cb: (buffer: Buffer) => void): ModbusAbstractResponse | null | undefined {
     if (!request) {
       return null
     }
@@ -96,7 +102,7 @@ export default class ModbusServerResponseHandler<FR extends ModbusAbstractRespon
       }
     }
 
-    return
+    return null
   }
 
   private _handleReadCoil (request: ModbusAbstractRequest, cb: (buffer: Buffer) => void) {
@@ -386,8 +392,6 @@ export default class ModbusServerResponseHandler<FR extends ModbusAbstractRespon
 
     this._server.emit('preWriteMultipleRegisters', request, cb)
 
-    const responseBody = WriteMultipleRegistersResponseBody.fromRequest(request.body)
-
     if (((request.body.address * 2) + request.body.values.length) > this._server.holding.length) {
       debug('illegal data address')
       /* illegal data address */
@@ -395,16 +399,17 @@ export default class ModbusServerResponseHandler<FR extends ModbusAbstractRespon
       const exceptionResponse = this._fromRequest(request, exceptionBody)
       cb(exceptionResponse.createPayload())
       return exceptionResponse
-    } else {
-      this._server.emit('writeMultipleRegisters', this._server.holding)
-      debug('Request Body: ', request.body)
-      this._server.holding.fill(new Uint8Array(request.body.values),
-        request.body.address * 2,
-        request.body.address * 2 + request.body.values.length)
-      this._server.emit('postWriteMultipleRegisters', this._server.holding)
     }
+    this._server.emit('writeMultipleRegisters', this._server.holding)
+    
+    this._server.holding.fill(new Uint8Array(request.body.values),
+      request.body.address * 2,
+      request.body.address * 2 + request.body.values.length)
+    this._server.emit('postWriteMultipleRegisters', this._server.holding)
 
+    const responseBody = WriteMultipleRegistersResponseBody.fromRequest(request.body)
     const response = this._fromRequest(request, responseBody)
+    debug(`Response: address: ${response.address}, fc: ${response.body.fc}`)
     const payload = response.createPayload()
     cb(payload)
 

@@ -28,15 +28,17 @@ export default class ModbusServerRequestHandler<FB extends ModbusAbstractRequest
     do {
       request = this._fromBuffer(this._buffer)
       if (request) {
-        debug('request', request.toString())
-        if (request instanceof ModbusRTURequest && request.corrupted) {
-          const corruptDataDump = this._buffer.subarray(0, request.byteCount).toString('hex').replace(/(.{2})/g, '$1 ').trim()
-          debug(`request message was corrupt: ${corruptDataDump}`)
-        } else {
-          this._requests.unshift(request)
+        if (request instanceof ModbusRTURequest) {
+          debug(request.toString())
+          if (request.corrupted) {
+            const corruptDataDump = this._buffer.subarray(0, request.byteCount).toString('hex').replace(/(.{2})/g, '$1 ').trim()
+            debug(`request message was corrupt: ${corruptDataDump}`)
+          } else {
+            this._requests.unshift(request)
+          }
+          // remove the request payload from the buffer
+          this._buffer = this._buffer.subarray(request.byteCount)
         }
-
-        this._buffer = this._buffer.subarray(request.byteCount)
       }
     } while (request != null)
   }

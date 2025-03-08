@@ -8,6 +8,7 @@ import { DuplexStream } from './DuplexStream';
 type AbstractRequest = ModbusAbstractRequest
 
 export interface IModbusServerOptions {
+  id: number | null
   coils: Buffer
   discrete: Buffer
   holding: Buffer
@@ -15,6 +16,7 @@ export interface IModbusServerOptions {
 }
 
 const DEFAULT_MODBUS_SERVER_OPTIONS: IModbusServerOptions = {
+  id: null,
   coils: Buffer.alloc(1024),
   discrete: Buffer.alloc(1024),
   holding: Buffer.alloc(1024),
@@ -45,6 +47,13 @@ export default class ModbusServer extends EventEmitter {
       ...DEFAULT_MODBUS_SERVER_OPTIONS,
       ...options
     }
+  }
+
+  /**
+   * The Modbus Slave ID
+   */
+  get id () {
+    return this._options.id
   }
 
   get coils () {
