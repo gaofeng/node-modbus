@@ -60,11 +60,11 @@ export default class ReadDiscreteInputsResponseBody extends ModbusReadResponseBo
    * @param {Buffer} buffer
    * @returns ReadDiscreteInputsResponseBody
    */
-  public static fromBuffer (buffer: Buffer) {
+  public static fromBuffer (buffer: Buffer): ReadDiscreteInputsResponseBody | null {
     try {
       const fc = buffer.readUInt8(0)
       const byteCount = buffer.readUInt8(1)
-      const coilStatus = buffer.slice(2, 2 + byteCount)
+      const coilStatus = buffer.subarray(2, 2 + byteCount)
 
       if (coilStatus.length !== byteCount) {
         return null

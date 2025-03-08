@@ -1,15 +1,12 @@
-'use strict'
-
-/* global describe, it, beforeEach */
-
-const assert = require('assert')
-const TCPResponseHandler = require('../dist/tcp-client-response-handler.js').default
+import assert from 'node:assert/strict'
+import ModbusTCPClientResponseHandler from '../src/tcp-client-response-handler'
+import { ExceptionResponseBody, ReadCoilsResponseBody } from '../src/response'
 
 describe('Modbus/TCP Client Response Handler Tests', function () {
-  let handler
+  let handler: ModbusTCPClientResponseHandler
 
   beforeEach(function () {
-    handler = new TCPResponseHandler()
+    handler = new ModbusTCPClientResponseHandler()
   })
 
   /* we are using the read coils function to test the modbus/tcp specifics */
@@ -30,14 +27,15 @@ describe('Modbus/TCP Client Response Handler Tests', function () {
 
     const response = handler.shift()
 
-    assert.ok(response !== null)
+    assert.ok(response !== undefined)
     assert.equal(1, response.id)
     assert.equal(0, response.protocol)
     assert.equal(5, response.bodyLength)
     assert.equal(11, response.byteCount)
     assert.equal(3, response.unitId)
-    assert.equal(1, response.body.fc)
-    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], response.body.valuesAsArray)
+    const body = response.body as ReadCoilsResponseBody
+    assert.equal(1, body.fc)
+    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], body.valuesAsArray)
   })
   it('should handle a valid FC43/14 read device identification response', function () {
     const responseBuffer = Buffer.from([
@@ -94,9 +92,10 @@ describe('Modbus/TCP Client Response Handler Tests', function () {
     assert.equal(0x03, response.bodyLength)
     assert.equal(0x09, response.byteCount)
     assert.equal(0x03, response.unitId)
-    assert.equal(0x01, response.body.fc)
-    assert.equal(0x01, response.body.code)
-    assert.equal('ILLEGAL FUNCTION', response.body.message)
+    const body = response.body as ExceptionResponseBody
+    assert.equal(0x01, body.fc)
+    assert.equal(0x01, body.code)
+    assert.equal('ILLEGAL FUNCTION', body.message)
   })
   it('should handle a FC43/14 exception with explicit MEI type', function () {
     const responseBuffer = Buffer.from([
@@ -181,7 +180,8 @@ describe('Modbus/TCP Client Response Handler Tests', function () {
     assert.equal(5, response.bodyLength)
     assert.equal(11, response.byteCount)
     assert.equal(3, response.unitId)
-    assert.equal(1, response.body.fc)
-    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], response.body.valuesAsArray)
+    const body = response.body as ReadCoilsResponseBody
+    assert.equal(1, body.fc)
+    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], body.valuesAsArray)
   })
 })

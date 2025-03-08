@@ -58,7 +58,7 @@ export default class WriteMultipleCoilsRequestBody extends ModbusRequestBody {
       const address = buffer.readUInt16BE(1)
       const quantity = buffer.readUInt16BE(3)
       const numberOfBytes = buffer.readUInt8(5)
-      const values = buffer.slice(6, 6 + numberOfBytes)
+      const values = buffer.subarray(6, 6 + numberOfBytes)
 
       return new WriteMultipleCoilsRequestBody(address, values, quantity)
     } catch (e) {
@@ -114,12 +114,14 @@ export default class WriteMultipleCoilsRequestBody extends ModbusRequestBody {
       this._valuesAsBuffer = this._values
       this._byteCount = Math.ceil(this._quantity / 8) + 6
       this._valuesAsArray = []
-      for (let i = 0; i < this._quantity; i += 1) {
-        const pos = i % 8
-        const curByteIdx = Math.floor(i / 8)
-        const curByte = this._values.readUInt8(curByteIdx)
-
-        this._valuesAsArray.push((curByte & Math.pow(2, pos)) > 0)
+      
+      // Refactored code for converting buffer to boolean array
+      for (let i = 0; i < this._quantity; i++) {
+        const byteIndex = Math.floor(i / 8)
+        const bitPosition = i % 8
+        const currentByte = this._values.readUInt8(byteIndex)
+        const bitValue = Boolean((currentByte >> bitPosition) & 1)
+        this._valuesAsArray.push(bitValue)
       }
     } else if (this._values instanceof Array) {
       this._byteCount = Math.ceil(this._values.length / 8) + 6

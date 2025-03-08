@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import ModbusServer from './modbus-server'
 
 import {
@@ -35,8 +36,8 @@ const {
   arrayStatusToBuffer
 } = BufferUtils
 
-import Debug from 'debug';import { Buffer } from 'buffer'
- const debug = Debug('modbus tcp response handler')
+import Debug from 'debug';
+const debug = Debug('modbus-server-response-handler')
 
 export default class ModbusServerResponseHandler<FR extends ModbusAbstractResponseFromRequest> {
   public _server: ModbusServer

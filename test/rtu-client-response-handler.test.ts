@@ -34,7 +34,7 @@ describe('Modbus/RTU Client Response Tests', function () {
 
     assert.equal(1, response.body.fc)
     const body = response.body as ReadCoilsResponseBody
-    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], body.valuesAsArray)
+    assert.deepEqual([true, false, true, true, true, false, true, true, false, false, false, false, false, false, false, false], body.valuesAsArray)
   })
   it('should handle a exception', function () {
     const responseBuffer = Buffer.from([
@@ -81,6 +81,6 @@ describe('Modbus/RTU Client Response Tests', function () {
     assert.equal(1, response.address)
     assert.equal(1, response.body.fc)
     const body = response.body as ReadCoilsResponseBody
-    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], body.valuesAsArray)
+    assert.deepEqual([true, false, true, true, true, false, true, true, false, false, false, false, false, false, false, false], body.valuesAsArray)
   })
 })

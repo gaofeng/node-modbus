@@ -91,19 +91,17 @@ class BufferUtils {
 
   public static bufferToArrayStatus (buffer: Buffer): BooleanArray {
     const statusArray: BooleanArray = []
-    let pos: number
-    let curByteIdx: number
-    let curByte: Byte
     if (!(buffer instanceof Buffer)) {
       return statusArray
     }
 
-    for (let i = 0; i < buffer.length * 8; i += 1) {
-      pos = i % 8
-      curByteIdx = Math.floor(i / 8)
-      curByte = buffer.readUInt8(curByteIdx)
-      const value = ((curByte & Math.pow(2, pos)) > 0)
-      statusArray.push(value ? 1 : 0)
+    for (let i = 0; i < buffer.length * 8; i++) {
+      const bitPosition = i % 8
+      const byteIndex = Math.floor(i / 8)
+      const currentByte = buffer.readUInt8(byteIndex)
+      // Use bitwise operations instead of Math.pow for better performance
+      const bitValue = Boolean((currentByte >> bitPosition) & 1)
+      statusArray.push(bitValue)
     }
 
     return statusArray

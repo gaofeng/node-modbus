@@ -1,8 +1,6 @@
-/* globals describe, it */
-'use strict'
-
-const assert = require('assert')
-const TCPRequest = require('../dist/tcp-request.js').default
+import assert from 'node:assert/strict'
+import TCPRequest from '../src/tcp-request'
+import { WriteMultipleCoilsRequestBody } from '../src/request'
 
 describe('TCP Request Tests', function () {
   it('should return a valid TCPRequest object for function 15', function () {
@@ -24,9 +22,10 @@ describe('TCP Request Tests', function () {
     assert.equal(request.protocol, 0x0000)
     assert.equal(request.length, 0x0009)
     assert.equal(request.unitId, 0x02)
-    assert.equal(request.body.fc, 0x0F)
-    assert.equal(request.body.address, 0x0000)
-    assert.deepEqual(request.body.valuesAsArray, [1, 0, 1, 0, 1, 0, 1, 0])
-    assert.deepEqual(request.body.valuesAsBuffer, Buffer.from([0x55, 0x55]))
+    const body = request.body as WriteMultipleCoilsRequestBody
+    assert.equal(body.fc, 0x0F)
+    assert.equal(body.address, 0x0000)
+    assert.deepEqual(body.valuesAsArray, [true, false, true, false, true, false, true, false])
+    assert.deepEqual(body.valuesAsBuffer, Buffer.from([0x55, 0x55]))
   })
 })

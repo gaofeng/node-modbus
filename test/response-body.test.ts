@@ -7,7 +7,7 @@ describe('Modbus Response Tests.', function () {
   /* with the read coils tests we test most of the common errors
    * like modbus exceptions, outOfSync errors, timeouts and so on */
   describe('Read Coils Tests.', function () {
-    it('should create request from buffer', function () {
+    it('should create respond body from buffer using factory', function () {
       const buffer: Buffer = Buffer.from([
         0x01, // fc
         0x02, // byte count
@@ -22,7 +22,8 @@ describe('Modbus Response Tests.', function () {
       assert.equal(0x01, response.fc)
       assert.equal(0x02, response.numberOfBytes)
       assert.equal(0x04, response.byteCount)
-      assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], response.valuesAsArray)
+      assert.deepEqual([true, false, true, true, true, false, true, true, false, false, false, false, false, false, false, false], 
+        response.valuesAsArray)
     })
     it('should handle invalid buffer content', function () {
       const buffer: Buffer = Buffer.from([

@@ -61,7 +61,7 @@ export default class ModbusTCPRequest<ReqBody extends ModbusRequestBody = Modbus
    * @param {Buffer} buffer
    * @return  A new Modbus TCP Request or Null.
    */
-  public static fromBuffer (buffer: Buffer) {
+  public static fromBuffer (buffer: Buffer) :ModbusTCPRequest | null{
     try {
       if (buffer.length < 7) {
         debug('no enough data in the buffer yet')
@@ -76,7 +76,7 @@ export default class ModbusTCPRequest<ReqBody extends ModbusRequestBody = Modbus
       debug('tcp header complete, id', id, 'protocol', protocol, 'length', length, 'unitId', unitId)
       debug('buffer', buffer)
 
-      const body = RequestFactory.fromBuffer(buffer.slice(7, 6 + length))
+      const body = RequestFactory.fromBuffer(buffer.subarray(7, 6 + length))
 
       if (!body) {
         return null

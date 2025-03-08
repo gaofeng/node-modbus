@@ -1,10 +1,6 @@
-'use strict'
-
-/* global describe, it */
-
-const assert = require('assert')
-const ReadDiscreteInputsRequest = require('../dist/request/read-discrete-inputs.js').default
-const ReadDiscreteInputsResponse = require('../dist/response/read-discrete-inputs.js').default
+import assert from 'node:assert/strict'
+import ReadDiscreteInputsRequest from "../src/request/read-discrete-inputs"
+import ReadDiscreteInputsResponse from "../src/response/read-discrete-inputs"
 
 describe('ReadDiscreteInputs Tests.', function () {
   describe('ReadDiscreteInputs Response', function () {
@@ -19,9 +15,10 @@ describe('ReadDiscreteInputs Tests.', function () {
       const buffer = Buffer.from([0x02, 0x02, 0x55, 0x01])
       const message = ReadDiscreteInputsResponse.fromBuffer(buffer)
 
+      assert.ok(message!== null)
       assert.equal(0x02, message.fc)
       assert.equal(0x02, message.numberOfBytes)
-      assert.deepEqual([1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0], message.valuesAsArray)
+      assert.deepEqual([true, false, true, false, true, false, true, false, true, false, false, false, false, false, false, false], message.valuesAsArray)
       assert.deepEqual(Buffer.from([0x55, 0x01]), message.valuesAsBuffer)
     })
     it('should return null on not enough buffer data', function () {

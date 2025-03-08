@@ -1,10 +1,6 @@
-'use strict'
-
-/* global describe, it */
-
-const assert = require('assert')
-const WriteSingleCoilRequest = require('../dist/request/write-single-coil.js').default
-const WriteSingleCoilResponseBody = require("../dist/response/write-single-coil.js").default;
+import assert from 'node:assert/strict'
+import WriteSingleCoilRequest from '../src/request/write-single-coil'
+import WriteSingleCoilResponseBody from '../src/response/write-single-coil'
 
 describe('WriteSingleCoil Tests.', function () {
   describe('WriteSingleCoil Response', function () {
@@ -28,6 +24,7 @@ describe('WriteSingleCoil Tests.', function () {
       const request = new WriteSingleCoilRequest(10, true)
       const requestBuffer = request.createPayload()
       const response = WriteSingleCoilResponseBody.fromBuffer(requestBuffer)
+      assert.ok(response!== null)
       const responseBuffer = response.createPayload()
 
       assert.strictEqual(true, response.value)
@@ -39,6 +36,7 @@ describe('WriteSingleCoil Tests.', function () {
       const request = new WriteSingleCoilRequest(10, false)
       const requestBuffer = request.createPayload()
       const response = WriteSingleCoilResponseBody.fromBuffer(requestBuffer)
+      assert.ok(response!== null)
       const responseBuffer = response.createPayload()
 
       assert.strictEqual(false, response.value)

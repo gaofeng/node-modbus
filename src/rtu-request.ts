@@ -64,16 +64,19 @@ export default class ModbusRTURequest<ReqBody extends ModbusRequestBody = Modbus
       debug(`rtu header address, ${address}`)
 
       // NOTE: This is potentially more than the body; the body length isn't know at this point...
-      const body = RequestFactory.fromBuffer(buffer.slice(1))
+      const body = RequestFactory.fromBuffer(buffer.subarray(1))
 
       if (!body) {
         return null
       }
 
       const payloadLength = 1 /* address */ + body.byteCount
-      const expectedCrc = CRC.crc16modbus(buffer.slice(0, payloadLength))
+      const expectedCrc = CRC.crc16modbus(buffer.subarray(0, payloadLength))
       const actualCrc = buffer.readUInt16LE(payloadLength)
       const corrupted = (expectedCrc !== actualCrc)
+      if (corrupted) {
+        debug(`rtu request crc failed, expected: 0x${expectedCrc.toString(16)}, actual: 0x${actualCrc.toString(16)}`)
+      }
 
       return new ModbusRTURequest(address, body, corrupted)
     } catch (e) {

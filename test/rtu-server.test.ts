@@ -1,16 +1,26 @@
-/* global describe, it, beforeEach */
-'use strict'
+import assert from 'node:assert/strict'
+import * as Modbus from '../src/modbus'
+import ModbusRTUServer from '../src/modbus-rtu-server'
+import { DuplexStream } from '../src/modbus'
 
-const assert = require('assert')
-const Modbus = require('../')
-const EventEmitter = require('events')
+class DuplexStreamMock extends DuplexStream {
+    open(): void {
+      console.log('open')
+    }
+    close(): void {
+      console.log('close')
+    }
+    write(_chunk: Buffer, _callback?: (error?: Error | null) => void): boolean {
+      return true
+    }
+  }
 
 describe('RTU Server Tests.', function () {
-  let socket, server
+  let socket: DuplexStreamMock
+  let server: ModbusRTUServer
 
   beforeEach(function () {
-    socket = new EventEmitter()
-    socket.write = (response) => {}
+    socket = new DuplexStreamMock()
 
     server = new Modbus.server.RTU(socket, {
       holding: Buffer.alloc(12, 0x00),
@@ -30,7 +40,7 @@ describe('RTU Server Tests.', function () {
         0xFF, 0xFF // CRC
       ])
 
-      socket.write = (response) => {
+      socket.write = (_response: Buffer) => {
         // No response expected
         assert(false)
       }
@@ -44,16 +54,18 @@ describe('RTU Server Tests.', function () {
       const request = Buffer.from([
         0x02, // address
         0x05, // function code
-        0x00, 0x01, // address
+        0x00, 0x01, // address,start from 0
         0xFF, 0x00, // value
         0xDD, 0xC9  // CRC
       ])
+      //0x57=01010111,0x55=01010101
       const expectedCoils = Buffer.from([0x57, 0x55, 0x55])
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(request, response)
         assert.deepEqual(expectedCoils, server.coils)
         done()
+        return true
       }
 
       socket.emit('data', request)
@@ -68,10 +80,11 @@ describe('RTU Server Tests.', function () {
       ])
       const expectedCoils = Buffer.from([0x55, 0x54, 0x55])
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(request, response)
         assert.deepEqual(expectedCoils, server.coils)
         done()
+        return true
       }
 
       socket.emit('data', request)
@@ -98,10 +111,11 @@ describe('RTU Server Tests.', function () {
       ])
       const expectedCoils = Buffer.from([0x5F, 0x55, 0x55])
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(expectedResponse, response)
         assert.deepEqual(expectedCoils, server.coils)
         done()
+        return true
       }
 
       socket.emit('data', request)
@@ -125,10 +139,11 @@ describe('RTU Server Tests.', function () {
       ])
       const expectedCoils = Buffer.from([0xFF, 0x55, 0x55])
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(expectedResponse, response)
         assert.deepEqual(expectedCoils, server.coils)
         done()
+        return true
       }
 
       socket.emit('data', request)
@@ -145,9 +160,10 @@ describe('RTU Server Tests.', function () {
       ])
       const expectedCoils = Buffer.from([0xFF, 0x55, 0x55])
 
-      socket.write = (response) => {
+      socket.write = (_response: Buffer) => {
         assert.deepEqual(expectedCoils, server.coils)
         done()
+        return true
       }
       socket.emit('data', request)
     })
@@ -170,10 +186,11 @@ describe('RTU Server Tests.', function () {
       ])
       const expectedCoils = Buffer.from([0xD5, 0x57, 0x55])
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(expectedResponse, response)
         assert.deepEqual(expectedCoils, server.coils)
         done()
+        return true
       }
 
       socket.emit('data', request)
@@ -197,10 +214,11 @@ describe('RTU Server Tests.', function () {
       ])
       const expectedCoils = Buffer.from([0x55, 0x5F, 0x55])
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(expectedResponse, response)
         assert.deepEqual(expectedCoils, server.coils)
         done()
+        return true
       }
 
       socket.emit('data', request)
@@ -228,10 +246,11 @@ describe('RTU Server Tests.', function () {
       const expectedHolding = Buffer.alloc(12, 0x00)
       expectedHolding.writeUInt16BE(0xD903, 0)
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(expectedResponse, response)
         assert.deepEqual(expectedHolding, server.holding)
         done()
+        return true
       }
 
       socket.emit('data', request)
@@ -258,10 +277,11 @@ describe('RTU Server Tests.', function () {
       expectedHolding.writeUInt16BE(0xD903, 0)
       expectedHolding.writeUInt16BE(0xD903, 2)
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(expectedResponse, response)
         assert.deepEqual(expectedHolding, server.holding)
         done()
+        return true
       }
 
       socket.emit('data', request)
@@ -288,10 +308,11 @@ describe('RTU Server Tests.', function () {
       expectedHolding.writeUInt16BE(0xD903, 8)
       expectedHolding.writeUInt16BE(0xD903, 10)
 
-      socket.write = (response) => {
+      socket.write = (response: Buffer) => {
         assert.deepEqual(expectedResponse, response)
         assert.deepEqual(expectedHolding, server.holding)
         done()
+        return true
       }
 
       socket.emit('data', request)

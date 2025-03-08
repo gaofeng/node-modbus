@@ -3,7 +3,7 @@ import bufferUtils from '../src/buffer-utils'
 
 describe('Buffer and status conversions.', function () {
   it('should convert 10 coils status to buffer 2 bytes', function () {
-    const input = [0, 0, 0, 0, 1, 0, 1, 0, 1, 0]
+    const input = [false, false, false, false, true, false, true, false, true, false]
     const expected = Buffer.from([0x50, 0x01])
     const result = bufferUtils.arrayStatusToBuffer(input)
 
@@ -12,7 +12,7 @@ describe('Buffer and status conversions.', function () {
 
   it('should convert a buffer with hex to coils/discrete array status', function () {
     const input = Buffer.from([0x50, 0x01])
-    const expected = [0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+    const expected = [false, false, false, false, true, false, true, false, true, false, false, false, false, false, false, false]
     const result = bufferUtils.bufferToArrayStatus(input)
 
     assert.deepEqual(expected, result)
@@ -20,7 +20,7 @@ describe('Buffer and status conversions.', function () {
 
   it('should convert a buffer with bin to coils/discrete array status', function () {
     const input = Buffer.from([0b01010000, 0b00000001])
-    const expected = [0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+    const expected = [false, false, false, false, true, false, true, false, true, false, false, false, false, false, false, false]
     const result = bufferUtils.bufferToArrayStatus(input)
 
     assert.deepEqual(expected, result)
