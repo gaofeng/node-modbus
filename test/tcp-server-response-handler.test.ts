@@ -1,18 +1,9 @@
-'use strict'
-
-/* global describe, it */
-
-const assert = require('assert')
-const ReadCoilsResponseBody = require('../dist/response/read-coils.js').default
-const ReadDiscreteInputsResponseBody = require('../dist/response/read-discrete-inputs.js').default
-const ReadHoldingRegistersResponseBody = require('../dist/response/read-holding-registers.js').default
-const ReadInputRegistersResponseBody = require('../dist/response/read-input-registers.js').default
-const WriteSingleCoilResponseBody = require('../dist/response/write-single-coil.js').default
-const WriteSingleRegisterResponseBody = require('../dist/response/write-single-register.js').default
-const WriteMultipleCoilsResponseBody = require('../dist/response/write-multiple-coils.js').default
-const WriteMultipleRegistersResponseBody = require('../dist/response/write-multiple-registers.js').default
-const ModbusTCPResponse = require('../dist/tcp-response.js').default
-const ModbusTCPRequest = require('../dist/tcp-request.js').default
+import assert from 'node:assert/strict'
+import ModbusTCPRequest from "../src/tcp-request"
+import ModbusTCPResponse from "../src/tcp-response"
+import ReadCoilsRequestBody from '../src/request/read-coils'
+import { ReadCoilsResponseBody, ReadDiscreteInputsResponseBody, ReadHoldingRegistersResponseBody, ReadInputRegistersResponseBody, WriteMultipleCoilsResponseBody, WriteMultipleRegistersResponseBody, WriteSingleCoilResponseBody, WriteSingleRegisterResponseBody } from '../src/response'
+import { ReadDiscreteInputsRequestBody, ReadHoldingRegistersRequestBody, ReadInputRegistersRequestBody, WriteMultipleCoilsRequestBody, WriteMultipleRegistersRequestBody, WriteSingleCoilRequestBody, WriteSingleRegisterRequestBody } from '../src/request'
 
 describe('Modbus/TCP Server Response Handler Tests', function () {
   /* we are using the read coils function to test the modbus/tcp specifics */
@@ -33,7 +24,8 @@ describe('Modbus/TCP Server Response Handler Tests', function () {
     ])
 
     const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-    const responseBody = ReadCoilsResponseBody.fromRequest(request.body, coils)
+    assert.ok(request !== null)
+    const responseBody = ReadCoilsResponseBody.fromRequest(request.body as ReadCoilsRequestBody, coils)
     const response = ModbusTCPResponse.fromRequest(request, responseBody)
     const payload = response.createPayload()
     const responseBuffer = Buffer.from([
@@ -65,7 +57,8 @@ describe('Modbus/TCP Server Response Handler Tests', function () {
     ])
 
     const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-    const responseBody = ReadDiscreteInputsResponseBody.fromRequest(request.body, discreteInputs)
+    assert.ok(request !== null)
+    const responseBody = ReadDiscreteInputsResponseBody.fromRequest(request.body as ReadDiscreteInputsRequestBody, discreteInputs)
     const response = ModbusTCPResponse.fromRequest(request, responseBody)
     const payload = response.createPayload()
     const responseBuffer = Buffer.from([
@@ -100,7 +93,8 @@ describe('Modbus/TCP Server Response Handler Tests', function () {
     ])
 
     const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-    const responseBody = ReadHoldingRegistersResponseBody.fromRequest(request.body, holdingRegisters)
+    assert.ok(request !== null)
+    const responseBody = ReadHoldingRegistersResponseBody.fromRequest(request.body as ReadHoldingRegistersRequestBody, holdingRegisters)
     const response = ModbusTCPResponse.fromRequest(request, responseBody)
     const payload = response.createPayload()
     const responseBuffer = Buffer.from([
@@ -136,7 +130,8 @@ describe('Modbus/TCP Server Response Handler Tests', function () {
     ])
 
     const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-    const responseBody = ReadInputRegistersResponseBody.fromRequest(request.body, inputRegisters)
+    assert.ok(request !== null)
+    const responseBody = ReadInputRegistersResponseBody.fromRequest(request.body as ReadInputRegistersRequestBody, inputRegisters)
     const response = ModbusTCPResponse.fromRequest(request, responseBody)
     const payload = response.createPayload()
     const responseBuffer = Buffer.from([
@@ -165,7 +160,8 @@ describe('Modbus/TCP Server Response Handler Tests', function () {
     ])
 
     const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-    const responseBody = WriteSingleCoilResponseBody.fromRequest(request.body)
+    assert.ok(request !== null)
+    const responseBody = WriteSingleCoilResponseBody.fromRequest(request.body as WriteSingleCoilRequestBody)
     const response = ModbusTCPResponse.fromRequest(request, responseBody)
     const payload = response.createPayload()
     const responseBuffer = Buffer.from([
@@ -192,7 +188,8 @@ describe('Modbus/TCP Server Response Handler Tests', function () {
     ])
 
     const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-    const responseBody = WriteSingleRegisterResponseBody.fromRequest(request.body)
+    assert.ok(request !== null)
+    const responseBody = WriteSingleRegisterResponseBody.fromRequest(request.body as WriteSingleRegisterRequestBody)
     const response = ModbusTCPResponse.fromRequest(request, responseBody)
     const payload = response.createPayload()
     const responseBuffer = Buffer.from([
@@ -221,7 +218,8 @@ describe('Modbus/TCP Server Response Handler Tests', function () {
     ])
 
     const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-    const responseBody = WriteMultipleCoilsResponseBody.fromRequest(request.body)
+    assert.ok(request !== null)
+    const responseBody = WriteMultipleCoilsResponseBody.fromRequest(request.body as WriteMultipleCoilsRequestBody)
     const response = ModbusTCPResponse.fromRequest(request, responseBody)
     const payload = response.createPayload()
     const responseBuffer = Buffer.from([
@@ -251,7 +249,8 @@ describe('Modbus/TCP Server Response Handler Tests', function () {
     ])
 
     const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-    const responseBody = WriteMultipleRegistersResponseBody.fromRequest(request.body)
+    assert.ok(request !== null)
+    const responseBody = WriteMultipleRegistersResponseBody.fromRequest(request.body as WriteMultipleRegistersRequestBody)
     const response = ModbusTCPResponse.fromRequest(request, responseBody)
     const payload = response.createPayload()
     const responseBuffer = Buffer.from([

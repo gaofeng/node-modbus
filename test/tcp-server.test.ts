@@ -1,18 +1,31 @@
-/* global describe, it, beforeEach */
-'use strict'
+import assert from 'node:assert/strict'
+import {DuplexStream, server as Modbus_Server} from '../src/modbus'
+import ModbusTCPServer from '../src/modbus-tcp-server'
+import { DuplexServer } from '../src/DuplexServer'
 
-const assert = require('assert')
-const Modbus = require('../')
-const EventEmitter = require('events')
+class DuplexStreamMock extends DuplexStream {
+  open(): void {
+    console.log('open')
+  }
+  close(): void {
+    console.log('close')
+  }
+  write(_chunk: Buffer, _callback?: (error?: Error | null) => void): boolean {
+    return true
+  }
+}
 
 describe('TCP Server Tests.', function () {
-  let socket, server
+  let server: DuplexServer
+  let socket: DuplexStreamMock
+  let modbusServer: ModbusTCPServer
 
   beforeEach(function () {
-    socket = new EventEmitter()
-    socket.write = (response) => {}
+    server = new DuplexServer()
+    socket = new DuplexStreamMock()
 
-    server = new Modbus.server.TCP(socket, {
+    modbusServer = new Modbus_Server.TCP(server, {
+      id: 2,
       holding: Buffer.alloc(12, 0x00),
       coils: Buffer.from([0x55, 0x55, 0x55])
     })
@@ -33,11 +46,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(request, response)
-        assert.deepEqual(expectedCoils, server.coils)
+        assert.deepEqual(expectedCoils, modbusServer.coils)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
     it('should force a coil in the server buffer at address 8', function (done) {
@@ -54,11 +68,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(request, response)
-        assert.deepEqual(expectedCoils, server.coils)
+        assert.deepEqual(expectedCoils, modbusServer.coils)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
   })
@@ -89,11 +104,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(expectedResponse, response)
-        assert.deepEqual(expectedCoils, server.coils)
+        assert.deepEqual(expectedCoils, modbusServer.coils)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
     it('should write <FF> in the server buffer coils at address 0', function (done) {
@@ -121,11 +137,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(expectedResponse, response)
-        assert.deepEqual(expectedCoils, server.coils)
+        assert.deepEqual(expectedCoils, modbusServer.coils)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
     it('should write <FF 01> in the server buffer coils at address 0', function (done) {
@@ -143,10 +160,12 @@ describe('TCP Server Tests.', function () {
       const expectedCoils = Buffer.from([0xFF, 0x55, 0x55])
 
       socket.write = (response) => {
-        assert.deepEqual(expectedCoils, server.coils)
+        assert.deepEqual(expectedCoils, modbusServer.coils)
         done()
+        return true
       }
-      socket.emit('connection', socket)
+
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
     it('should write <0F> in the server buffer coils at address 6', function (done) {
@@ -174,11 +193,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(expectedResponse, response)
-        assert.deepEqual(expectedCoils, server.coils)
+        assert.deepEqual(expectedCoils, modbusServer.coils)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
     it('should write <0F> in the server buffer coils at address 8', function (done) {
@@ -206,11 +226,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(expectedResponse, response)
-        assert.deepEqual(expectedCoils, server.coils)
+        assert.deepEqual(expectedCoils, modbusServer.coils)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
   })
@@ -242,11 +263,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(expectedResponse, response)
-        assert.deepEqual(expectedHolding, server.holding)
+        assert.deepEqual(expectedHolding, modbusServer.holding)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
     it('should write <D903 D903> in the server buffer at address 0', function (done) {
@@ -277,11 +299,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(expectedResponse, response)
-        assert.deepEqual(expectedHolding, server.holding)
+        assert.deepEqual(expectedHolding, modbusServer.holding)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
     it('should write <D903 D903> in the server buffer at address 4', function (done) {
@@ -312,11 +335,12 @@ describe('TCP Server Tests.', function () {
 
       socket.write = (response) => {
         assert.deepEqual(expectedResponse, response)
-        assert.deepEqual(expectedHolding, server.holding)
+        assert.deepEqual(expectedHolding, modbusServer.holding)
         done()
+        return true
       }
 
-      socket.emit('connection', socket)
+      server.emit('connection', socket)
       socket.emit('data', request)
     })
   })

@@ -1,14 +1,10 @@
-'use strict'
-
-/* global describe, it */
-
-const assert = require('assert')
-
-const ModbusTCPRequest = require('../dist/tcp-request.js').default
-const ModbusTCPResponse = require('../dist/tcp-response.js').default
-const ReadCoilsRequest = require('../dist/request/read-coils.js').default
-const ReadCoilsResponse = require('../dist/response/read-coils.js').default
-const ModbusRequestBody = require('../dist/request/request-factory.js').default
+import assert from 'node:assert/strict'
+import ModbusTCPRequest from "../src/tcp-request"
+import ModbusTCPResponse from "../src/tcp-response"
+import ReadCoilsRequest from "../src/request/read-coils"
+import ReadCoilsResponse from "../src/response/read-coils"
+import ModbusRequestBody from "../src/request/request-factory"
+import ReadCoilsRequestBody from '../src/request/read-coils'
 
 describe('ReadCoils Tests.', function () {
   describe('ReadCoils Response', function () {
@@ -23,15 +19,16 @@ describe('ReadCoils Tests.', function () {
       const buffer = Buffer.from([0x01, 0x02, 0x55, 0x01])
       const message = ReadCoilsResponse.fromBuffer(buffer)
 
+      assert.ok(message !== null)
       assert.equal(0x01, message.fc)
       assert.equal(0x02, message.numberOfBytes)
-      assert.deepEqual([1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0], message.valuesAsArray)
+      assert.deepEqual([true, false, true, false, true, false, true, false, true, false, false, false, false, false, false, false], message.valuesAsArray)
       assert.deepEqual(Buffer.from([0x55, 0x01]), message.valuesAsBuffer)
     })
     it('should mask out extra bits', function () {
       const requestBody = ModbusRequestBody.fromBuffer(Buffer.from([0x01, 0x00, 0x00, 0x00, 0x09]))
       const coils = Buffer.from([0xff, 0xff])
-      const response = ReadCoilsResponse.fromRequest(requestBody, coils)
+      const response = ReadCoilsResponse.fromRequest(requestBody as ReadCoilsRequestBody, coils)
       const buffer = response.createPayload()
       const expected = Buffer.from([0x01, 0x02, 0xff, 0x01])
 
@@ -40,7 +37,7 @@ describe('ReadCoils Tests.', function () {
     it('should return an individual coil if requested', function () {
       const requestBody = ModbusRequestBody.fromBuffer(Buffer.from([0x01, 0x00, 0x00, 0x00, 0x01]))
       const coils = Buffer.from([0xff, 0xff])
-      const response = ReadCoilsResponse.fromRequest(requestBody, coils)
+      const response = ReadCoilsResponse.fromRequest(requestBody as ReadCoilsRequestBody, coils)
       const buffer = response.createPayload()
       const expected = Buffer.from([0x01, 0x01, 0x01])
 
@@ -71,7 +68,8 @@ describe('ReadCoils Tests.', function () {
         0x00, 0x08 // quantity
       ])
       const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-      const responseBody = ReadCoilsResponse.fromRequest(request.body, coils)
+      assert.ok(request !== null)
+      const responseBody = ReadCoilsResponse.fromRequest(request.body as ReadCoilsRequestBody, coils)
       const response = ModbusTCPResponse.fromRequest(request, responseBody)
       const payload = response.createPayload()
       const responseBuffer = Buffer.from([
@@ -98,7 +96,8 @@ describe('ReadCoils Tests.', function () {
         0x00, 0x08 // quantity
       ])
       const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-      const responseBody = ReadCoilsResponse.fromRequest(request.body, coils)
+      assert.ok(request !== null)
+      const responseBody = ReadCoilsResponse.fromRequest(request.body as ReadCoilsRequestBody, coils)
       const response = ModbusTCPResponse.fromRequest(request, responseBody)
       const payload = response.createPayload()
       const responseBuffer = Buffer.from([
@@ -125,7 +124,8 @@ describe('ReadCoils Tests.', function () {
         0x00, 0x09 // quantity
       ])
       const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-      const responseBody = ReadCoilsResponse.fromRequest(request.body, coils)
+      assert.ok(request !== null)
+      const responseBody = ReadCoilsResponse.fromRequest(request.body as ReadCoilsRequestBody, coils)
       const response = ModbusTCPResponse.fromRequest(request, responseBody)
       const payload = response.createPayload()
       const responseBuffer = Buffer.from([
@@ -152,7 +152,8 @@ describe('ReadCoils Tests.', function () {
         0x00, 0x07 // quantity
       ])
       const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-      const responseBody = ReadCoilsResponse.fromRequest(request.body, coils)
+      assert.ok(request !== null)
+      const responseBody = ReadCoilsResponse.fromRequest(request.body as ReadCoilsRequestBody, coils)
       const response = ModbusTCPResponse.fromRequest(request, responseBody)
       const payload = response.createPayload()
       const responseBuffer = Buffer.from([
@@ -179,7 +180,8 @@ describe('ReadCoils Tests.', function () {
         0x00, 0x04 // quantity
       ])
       const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-      const responseBody = ReadCoilsResponse.fromRequest(request.body, coils)
+      assert.ok(request !== null)
+      const responseBody = ReadCoilsResponse.fromRequest(request.body as ReadCoilsRequestBody, coils)
       const response = ModbusTCPResponse.fromRequest(request, responseBody)
       const payload = response.createPayload()
       const responseBuffer = Buffer.from([
@@ -206,7 +208,8 @@ describe('ReadCoils Tests.', function () {
         0x00, 0x03 // quantity
       ])
       const request = ModbusTCPRequest.fromBuffer(requestBuffer)
-      const responseBody = ReadCoilsResponse.fromRequest(request.body, coils)
+      assert.ok(request !== null)
+      const responseBody = ReadCoilsResponse.fromRequest(request.body as ReadCoilsRequestBody, coils)
       const response = ModbusTCPResponse.fromRequest(request, responseBody)
       const payload = response.createPayload()
       const responseBuffer = Buffer.from([
@@ -234,7 +237,7 @@ describe('ReadCoils Tests.', function () {
     it('should create a message object from a buffer', function () {
       const buffer = Buffer.from([0x01, 0x00, 0x0a, 0x00, 0x0c])
       const message = ReadCoilsRequest.fromBuffer(buffer)
-
+      assert.ok(message !== null)
       assert.equal(0x01, message.fc)
       assert.equal(10, message.start)
       assert.equal(12, message.count)

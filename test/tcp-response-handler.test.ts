@@ -35,7 +35,7 @@ describe('Modbus/TCP Client Response Handler Tests', function () {
     assert.equal(3, response.unitId)
     const body = response.body as ReadCoilsResponseBody
     assert.equal(1, body.fc)
-    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], body.valuesAsArray)
+    assert.deepEqual([true, false, true, true, true, false, true, true, false, false, false, false, false, false, false, false], body.valuesAsArray)
   })
   it('should handle a valid FC43/14 read device identification response', function () {
     const responseBuffer = Buffer.from([
@@ -182,6 +182,6 @@ describe('Modbus/TCP Client Response Handler Tests', function () {
     assert.equal(3, response.unitId)
     const body = response.body as ReadCoilsResponseBody
     assert.equal(1, body.fc)
-    assert.deepEqual([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], body.valuesAsArray)
+    assert.deepEqual([true, false, true, true, true, false, true, true, false, false, false, false, false, false, false, false], body.valuesAsArray)
   })
 })

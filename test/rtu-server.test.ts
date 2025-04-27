@@ -4,16 +4,16 @@ import ModbusRTUServer from '../src/modbus-rtu-server'
 import { DuplexStream } from '../src/modbus'
 
 class DuplexStreamMock extends DuplexStream {
-    open(): void {
-      console.log('open')
-    }
-    close(): void {
-      console.log('close')
-    }
-    write(_chunk: Buffer, _callback?: (error?: Error | null) => void): boolean {
-      return true
-    }
+  open(): void {
+    console.log('open')
   }
+  close(): void {
+    console.log('close')
+  }
+  write(_chunk: Buffer, _callback?: (error?: Error | null) => void): boolean {
+    return true
+  }
+}
 
 describe('RTU Server Tests.', function () {
   let socket: DuplexStreamMock

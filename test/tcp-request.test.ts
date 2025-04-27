@@ -2,8 +2,8 @@ import assert from 'node:assert/strict'
 import TCPRequest from '../src/tcp-request'
 import { WriteMultipleCoilsRequestBody } from '../src/request'
 
-describe('TCP Request Tests', function () {
-  it('should return a valid TCPRequest object for function 15', function () {
+describe('TCP Request Tests', () => {
+  it('should return a valid TCPRequest object for function 15', () => {
     const requestBuffer = Buffer.from([
       0x00, 0x01, // transaction id
       0x00, 0x00, // protocol

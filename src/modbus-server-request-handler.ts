@@ -1,9 +1,9 @@
+import Debug from 'debug'; 
+const debug = Debug('modbus-server-request-handler')
 import { Buffer } from 'buffer';
 import ModbusAbstractRequest, { ModbusAbstractRequestFromBuffer } from './abstract-request'
 import ModbusRTURequest from './rtu-request'
-
-import Debug from 'debug'; 
-const debug = Debug('modbus-server-request-handler')
+import ModbusTCPRequest from './tcp-request';
 
 export default class ModbusServerRequestHandler<FB extends ModbusAbstractRequestFromBuffer<any>> {
   public _fromBuffer: FB
@@ -28,7 +28,7 @@ export default class ModbusServerRequestHandler<FB extends ModbusAbstractRequest
     do {
       request = this._fromBuffer(this._buffer)
       if (request) {
-        if (request instanceof ModbusRTURequest) {
+        if (request instanceof ModbusRTURequest || request instanceof ModbusTCPRequest) {
           debug(request.toString())
           if (request.corrupted) {
             const corruptDataDump = this._buffer.subarray(0, request.byteCount).toString('hex').replace(/(.{2})/g, '$1 ').trim()
@@ -38,6 +38,8 @@ export default class ModbusServerRequestHandler<FB extends ModbusAbstractRequest
           }
           // remove the request payload from the buffer
           this._buffer = this._buffer.subarray(request.byteCount)
+        } else {
+          break
         }
       }
     } while (request != null)
