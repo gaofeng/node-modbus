@@ -1,7 +1,7 @@
 import { Buffer } from 'buffer'
 import { FunctionCode } from '../codes'
 
-import Debug from 'debug'
+import Debug from '../debug-help'
 const debug = Debug('request-body')
 
 export type ModbusRequestTypeName =

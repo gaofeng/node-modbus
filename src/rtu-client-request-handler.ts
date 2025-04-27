@@ -1,5 +1,6 @@
 
-import Debug from 'debug'; const debug = Debug('rtu-client-request-handler')
+import Debug from './debug-help'; 
+const debug = Debug('rtu-client-request-handler')
 import CRC from 'crc'
 import MBClientRequestHandler from './client-request-handler'
 import ModbusRequestBody from './request/request-body'
@@ -7,7 +8,6 @@ import ModbusRTURequest from './rtu-request'
 import ModbusRTUResponse from './rtu-response'
 import { UserRequestError } from './user-request-error'
 import UserRequest from './user-request'
-import { Buffer } from 'buffer';
 import { DuplexStream } from './DuplexStream';
 
 /** Modbus/RTU Client Request Handler

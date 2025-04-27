@@ -2,7 +2,7 @@
 import { Buffer } from 'buffer';
 import { BooleanArray, Byte } from './constants'
 
-import Debug from 'debug'; 
+import Debug from './debug-help'; 
 const debug = Debug('buffer-utils')
 
 // Buffer utilities to make simplify writing multiple coils

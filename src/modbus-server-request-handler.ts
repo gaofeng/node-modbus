@@ -1,4 +1,4 @@
-import Debug from 'debug'; 
+import Debug from './debug-help'; 
 const debug = Debug('modbus-server-request-handler')
 import { Buffer } from 'buffer';
 import ModbusAbstractRequest, { ModbusAbstractRequestFromBuffer } from './abstract-request'

@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer';
-import Debug from 'debug'; 
+import Debug from '../debug-help'; 
 const debug = Debug('response-factory')
 
 import { FC } from '../codes'

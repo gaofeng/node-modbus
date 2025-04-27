@@ -1,4 +1,4 @@
-import Debug from 'debug';
+import Debug from './debug-help';
 const debug = Debug('modbus-client')
 
 import { DuplexStream } from './DuplexStream';
@@ -16,14 +16,12 @@ import {
   WriteSingleRegisterRequestBody
 } from './request'
 
-import ModbusAbstractRequest from './abstract-request.js'
-import ModbusAbstractResponse from './abstract-response.js'
-import MBClientRequestHandler from './client-request-handler.js'
-import MBClientResponseHandler from './client-response-handler.js'
+import ModbusAbstractRequest from './abstract-request'
+import MBClientRequestHandler from './client-request-handler'
+import MBClientResponseHandler from './client-response-handler'
 import { UserRequestError } from './errors'
 import { CastRequestBody } from './request-response-map'
-import { WriteMultipleCoilsResponseBody } from './response'
-import { PromiseUserRequest } from './user-request.js'
+import { PromiseUserRequest } from './user-request'
 import { Buffer } from 'buffer';
 
 /** Common Modbus Client

@@ -1,4 +1,5 @@
-import Debug from 'debug'; const debug = Debug('rtu-response')
+import Debug from './debug-help'; 
+const debug = Debug('rtu-response')
 import CRC from 'crc'
 import ModbusAbstractResponse from './abstract-response'
 import { ModbusRequestBody } from './request/index'

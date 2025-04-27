@@ -3,7 +3,7 @@ const OFFLINE = 'Offline'
 const MODBUS_EXCEPTION = 'ModbusException'
 const MANUALLY_CLEARED = 'ManuallyCleared'
 
-import Debug from 'debug'
+import Debug from './debug-help'
 const debug = Debug('client-request-handler')
 import { DuplexStream } from './DuplexStream'
 import ModbusAbstractRequest from './abstract-request'

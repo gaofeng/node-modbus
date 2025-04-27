@@ -15,7 +15,8 @@ import WriteMultipleRegistersResponse from './write-multiple-registers'
 import WriteSingleCoilRequest from './write-single-coil'
 import WriteSingleRegisterRequest from './write-single-register'
 
-import Debug from 'debug'; const debug = Debug('request-factory')
+import Debug from '../debug-help'; 
+const debug = Debug('request-factory')
 
 export default class RequestFactory {
 

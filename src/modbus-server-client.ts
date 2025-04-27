@@ -1,5 +1,5 @@
 
-import Debug from 'debug';
+import Debug from './debug-help';
 const debug = Debug('modbus-server-client')
 import { DuplexStream } from './DuplexStream'
 import { ModbusAbstractRequestFromBuffer } from './abstract-request'

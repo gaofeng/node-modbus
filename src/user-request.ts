@@ -1,4 +1,5 @@
-
+import Debug from './debug-help'; 
+const debug = Debug('user-request')
 import type ModbusAbstractRequest from './abstract-request'
 import type { RequestToResponse } from './request-response-map'
 import type ModbusRTURequest from './rtu-request'
@@ -6,7 +7,6 @@ import type ModbusTCPRequest from './tcp-request'
 import { UserRequestError } from './user-request-error'
 import { UserRequestMetrics } from './user-request-metrics'
 
-import Debug from 'debug'; const debug = Debug('user-request')
 
 export type ModbusRequest = ModbusTCPRequest | ModbusRTURequest
 export interface IUserRequestResolve<Req extends ModbusAbstractRequest> {

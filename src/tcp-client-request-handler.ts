@@ -1,9 +1,8 @@
+import Debug from './debug-help';
+const debug = Debug('tcp-client-request-handler')
 
 import ModbusRequestBody from './request/request-body'
 import ModbusTCPResponse from './tcp-response'
-
-import Debug from 'debug';
-const debug = Debug('tcp-client-request-handler')
 import MBClientRequestHandler from './client-request-handler'
 import ModbusTCPRequest from './tcp-request'
 import UserRequest from './user-request'

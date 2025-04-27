@@ -1,4 +1,5 @@
-import Debug from 'debug'; const debug = Debug('modbus tcp server')
+import Debug from './debug-help'; 
+const debug = Debug('modbus tcp server')
 import ModbusServer, { IModbusServerOptions } from './modbus-server'
 import ModbusServerClient from './modbus-server-client'
 import ModbusTCPRequest from './tcp-request'

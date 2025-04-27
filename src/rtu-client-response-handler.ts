@@ -1,4 +1,5 @@
-import Debug from 'debug'; const debug = Debug('rtu-response-handler')
+import Debug from './debug-help'
+const debug = Debug('rtu-response-handler')
 import ModbusClientResponseHandler from './client-response-handler'
 import ModbusRTUResponse from './rtu-response'
 import { Buffer } from 'buffer';
