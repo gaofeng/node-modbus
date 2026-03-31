@@ -51,7 +51,7 @@ describe('RTU Server Tests.', function () {
   })
 
   describe('Write Single Coil Tests.', function () {
-    it('should force a coil in the server buffer at address 1', function (done) {
+    it('should force a coil ON in the server buffer at address 1', function (done) {
       const request = Buffer.from([
         0x02, // address
         0x05, // function code
@@ -71,7 +71,7 @@ describe('RTU Server Tests.', function () {
 
       socket.emit('data', request)
     })
-    it('should force a coil in the server buffer at address 8', function (done) {
+    it('should force a coil OFF in the server buffer at address 8', function (done) {
       const request = Buffer.from([
         0x02, // address
         0x05, // function code
@@ -79,6 +79,7 @@ describe('RTU Server Tests.', function () {
         0x00, 0x00, // output value
         0x4C, 0x3B // CRC
       ])
+      // clear the second byte's bit 0 (0x55 -> 0x54)
       const expectedCoils = Buffer.from([0x55, 0x54, 0x55])
 
       socket.write = (response: Buffer) => {

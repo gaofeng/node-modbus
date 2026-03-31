@@ -53,19 +53,13 @@ export default class ReadHoldingRegistersResponseBody extends ModbusReadResponse
    */
   public static fromBuffer (buffer: Buffer) {
     const fc = buffer.readUInt8(0)
-    const byteCount = buffer.readUInt8(1)
-    const payload = buffer.slice(2, 2 + byteCount)
-
     if (fc !== FC.READ_HOLDING_REGISTERS) {
       return null
     }
-
-    const values:number[] = []
-    for (let i = 0; i < byteCount; i += 2) {
-      values.push(payload.readUInt16BE(i))
-    }
-
-    return new ReadHoldingRegistersResponseBody(byteCount, values, payload)
+    const byteCount = buffer.readUInt8(1)
+    const bufferSegment = buffer.subarray(2, 2 + byteCount)
+    
+    return new ReadHoldingRegistersResponseBody(byteCount, bufferSegment)
   }
   protected _valuesAsArray: number[] | Uint16Array
   protected _valuesAsBuffer: Buffer
@@ -73,7 +67,7 @@ export default class ReadHoldingRegistersResponseBody extends ModbusReadResponse
   private _values: number[] | Buffer
   private _bufferLength: any
 
-  constructor (byteCount: number, values: number[] | Buffer, payload?: Buffer) {
+  constructor (byteCount: number, values: number[] | Buffer) {
     super(FC.READ_HOLDING_REGISTERS)
     this._byteCount = byteCount
     this._values = values
@@ -83,7 +77,9 @@ export default class ReadHoldingRegistersResponseBody extends ModbusReadResponse
 
     if (values instanceof Array) {
       this._valuesAsArray = values
-      this._valuesAsBuffer = Buffer.from(values)
+      const buf = Buffer.alloc(values.length * 2)
+      values.forEach((v, i) => buf.writeUInt16BE(v, i * 2))
+      this._valuesAsBuffer = buf
       this._bufferLength += values.length * 2
     } else if (values instanceof Buffer) {
       this._valuesAsArray = Uint16Array.from(values)
@@ -91,10 +87,6 @@ export default class ReadHoldingRegistersResponseBody extends ModbusReadResponse
       this._bufferLength += values.length
     } else {
       throw new Error('InvalidType_MustBeBufferOrArray')
-    }
-
-    if (payload instanceof Buffer) {
-      this._valuesAsBuffer = payload
     }
   }
 

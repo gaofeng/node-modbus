@@ -1,12 +1,11 @@
-import SerialPort from 'serialport'
+import { SerialPort } from 'serialport'
 
-SerialPort.list(function (err, ports) {
-  if (err) {
-    console.error(err)
-    return
-  }
-
+//npx ts-node examples/typescript/serial/ListSerialInterfaces.ts
+async function main() {
+  const ports = await SerialPort.list()
   ports.forEach(function (port) {
-    console.log(port.comName)
+    console.log(port.path)
   })
-})
+}
+
+main().catch(console.error)

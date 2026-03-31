@@ -54,6 +54,8 @@ export const server = {
 
 // export const responses = Responses
 export const codes = Codes
+export type { ErrorCode } from './codes'
+export type { FunctionCode } from './codes'
 export const errors = Errors
 export const limits = LIMITS
 
