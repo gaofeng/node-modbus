@@ -4,6 +4,7 @@ import ModbusAbstractResponse from './abstract-response'
 import {
   ModbusRequestBody,
   ReadCoilsRequestBody,
+  ReadDeviceIdentificationRequestBody,
   ReadDiscreteInputsRequestBody,
   ReadHoldingRegistersRequestBody,
   ReadInputRegistersRequestBody,
@@ -15,6 +16,7 @@ import {
 import {
   ModbusResponseBody,
   ReadCoilsResponseBody,
+  ReadDeviceIdentificationResponseBody,
   ReadDiscreteInputsResponseBody,
   ReadHoldingRegistersResponseBody,
   ReadInputRegistersResponseBody,
@@ -30,6 +32,7 @@ import ModbusTCPResponse from './tcp-response'
 
 export type BodyRequestToResponse<T> =
   T extends ReadCoilsRequestBody ? ReadCoilsResponseBody :
+  T extends ReadDeviceIdentificationRequestBody ? ReadDeviceIdentificationResponseBody :
   T extends ReadDiscreteInputsRequestBody ? ReadDiscreteInputsResponseBody :
   T extends ReadHoldingRegistersRequestBody ? ReadHoldingRegistersResponseBody :
   T extends ReadInputRegistersRequestBody ? ReadInputRegistersResponseBody :
@@ -41,6 +44,7 @@ export type BodyRequestToResponse<T> =
 
 export type BodyResponseToRequest<T> =
   T extends ReadCoilsResponseBody ? ReadCoilsRequestBody :
+  T extends ReadDeviceIdentificationResponseBody ? ReadDeviceIdentificationRequestBody :
   T extends ReadDiscreteInputsResponseBody ? ReadDiscreteInputsRequestBody :
   T extends ReadHoldingRegistersResponseBody ? ReadHoldingRegistersRequestBody :
   T extends ReadInputRegistersResponseBody ? ReadInputRegistersRequestBody :

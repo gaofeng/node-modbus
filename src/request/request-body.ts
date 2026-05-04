@@ -9,6 +9,7 @@ export type ModbusRequestTypeName =
   | 'ReadDiscreteInput'
   | 'ReadHoldingRegisters'
   | 'ReadInputRegisters'
+  | 'ReadDeviceIdentification'
   | 'WriteMultipleCoils'
   | 'WriteMultipleRegisters'
   | 'WriteSingleCoil'

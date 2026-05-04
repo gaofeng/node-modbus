@@ -3,6 +3,7 @@ import Debug = require('debug'); const debug = Debug('response-factory')
 import { FC } from '../codes/index.js'
 import ExceptionResponseBody from './exception.js'
 import ReadCoilsResponseBody from './read-coils.js'
+import ReadDeviceIdentificationBody from './read-device-identification.js'
 import ReadDiscreteInputsBody from './read-discrete-inputs.js'
 import ReadHoldingRegistersBody from './read-holding-registers.js'
 import ReadInputRegistersBody from './read-input-registers.js'
@@ -44,6 +45,11 @@ export default class ResponseFactory {
       /* Read Input Registers Response */
       if (fc === FC.READ_INPUT_REGISTERS) {
         return ReadInputRegistersBody.fromBuffer(buffer)
+      }
+
+      /* Read Device Identification Response */
+      if (fc === FC.READ_DEVICE_IDENTIFICATION) {
+        return ReadDeviceIdentificationBody.fromBuffer(buffer)
       }
 
       /* Write Single Coil Response */

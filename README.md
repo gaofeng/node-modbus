@@ -5,7 +5,7 @@ A simple an easy to use Modbus TCP client/server implementation.
 Modbus [![Build Status](https://travis-ci.org/Cloud-Automation/node-modbus.png)](https://travis-ci.org/Cloud-Automation/node-modbus)
 ========
 
-Modbus is a simple Modbus TCP/RTU Client/Server with a simple API. It supports modbus function codes 1 - 6 and 15 and 16.
+Modbus is a simple Modbus TCP/RTU Client/Server with a simple API. It supports modbus function codes 1 - 6, 15, 16 and 43/14.
 
 Status
 ------

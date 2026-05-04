@@ -5,6 +5,7 @@ import {
 } from '../codes'
 import ExceptionRequest from './exception.js'
 import ReadCoilsRequest from './read-coils.js'
+import ReadDeviceIdentificationRequest from './read-device-identification.js'
 import ReadDiscreteInputsRequest from './read-discrete-inputs.js'
 import ReadHoldingRegistersRequest from './read-holding-registers.js'
 import ReadInputRegistersRequest from './read-input-registers.js'
@@ -45,6 +46,9 @@ export default class RequestFactory {
 
           case FC.READ_INPUT_REGISTERS:
             return ReadInputRegistersRequest.fromBuffer(buffer)
+
+          case FC.READ_DEVICE_IDENTIFICATION:
+            return ReadDeviceIdentificationRequest.fromBuffer(buffer)
 
           case FC.WRITE_SINGLE_COIL:
             return WriteSingleCoilRequest.fromBuffer(buffer)
