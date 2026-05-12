@@ -3,6 +3,11 @@ export { default as ReadCoilsRequestBody, isReadCoilsRequestBody } from './read-
 export { default as ReadDiscreteInputsRequestBody, isReadDiscreteInputsRequestBody } from './read-discrete-inputs'
 export { default as ReadHoldingRegistersRequestBody, isReadHoldingRegistersRequestBody } from './read-holding-registers'
 export { default as ReadInputRegistersRequestBody, isReadInputRegistersRequestBody } from './read-input-registers'
+export {
+  default as ReadDeviceIdentificationRequestBody,
+  isReadDeviceIdentificationRequestBody,
+  ReadDeviceIdentificationCode
+} from './read-device-identification'
 export { default as ModbusRequestBody, isModbusRequestBody, ModbusRequestTypeName } from './request-body'
 export { default as RequestFactory } from './request-factory'
 export { default as WriteMultipleCoilsRequestBody, isWriteMultipleCoilsRequestBody } from './write-multiple-coils'

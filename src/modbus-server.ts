@@ -75,6 +75,9 @@ export default class ModbusServer extends EventEmitter {
   public on (event: 'readInputRegisters', listener: (request: AbstractRequest, cb: BufferCB) => void): this
   public on (event: 'preReadInputRegisters', listener: (request: AbstractRequest, cb: BufferCB) => void): this
   public on (event: 'postReadInputRegisters', listener: (request: AbstractRequest, cb: BufferCB) => void): this
+  public on (event: 'readDeviceIdentification', listener: (request: AbstractRequest, cb: BufferCB) => void): this
+  public on (event: 'preReadDeviceIdentification', listener: (request: AbstractRequest, cb: BufferCB) => void): this
+  public on (event: 'postReadDeviceIdentification', listener: (request: AbstractRequest, cb: BufferCB) => void): this
   public on (event: 'writeSingleCoil', listener: (request: AbstractRequest, cb: BufferCB) => void): this
   public on (event: 'preWriteSingleCoil', listener: (request: AbstractRequest, cb: BufferCB) => void): this
   public on (event: 'postWriteSingleCoil', listener: (request: AbstractRequest, cb: BufferCB) => void): this
@@ -109,6 +112,9 @@ export default class ModbusServer extends EventEmitter {
   public emit (event: 'readInputRegisters', request: AbstractRequest, cb: BufferCB): boolean
   public emit (event: 'preReadInputRegisters', request: AbstractRequest, cb: BufferCB): boolean
   public emit (event: 'postReadInputRegisters', request: AbstractRequest, cb: BufferCB): boolean
+  public emit (event: 'readDeviceIdentification', request: AbstractRequest, cb: BufferCB): boolean
+  public emit (event: 'preReadDeviceIdentification', request: AbstractRequest, cb: BufferCB): boolean
+  public emit (event: 'postReadDeviceIdentification', request: AbstractRequest, cb: BufferCB): boolean
   public emit (event: 'writeSingleCoil', request: AbstractRequest, cb: BufferCB): boolean
   public emit (event: 'preWriteSingleCoil', request: AbstractRequest, cb: BufferCB): boolean
   public emit (event: 'postWriteSingleCoil', request: AbstractRequest, cb: BufferCB): boolean

@@ -15,6 +15,7 @@ import {
 import {
   isExceptionRequestBody,
   isReadCoilsRequestBody,
+  isReadDeviceIdentificationRequestBody,
   isReadDiscreteInputsRequestBody,
   isReadHoldingRegistersRequestBody,
   isReadInputRegistersRequestBody,
@@ -69,6 +70,9 @@ export default class ModbusServerResponseHandler<FR extends ModbusAbstractRespon
 
         case FC.READ_DISCRETE_INPUT:
           return this._handleDiscreteInput(request, cb)
+
+        case FC.READ_DEVICE_IDENTIFICATION:
+          return this._handleReadDeviceIdentification(request, cb)
 
         case FC.READ_HOLDING_REGISTERS:
           return this._handleReadHoldingRegisters(request, cb)
@@ -139,6 +143,40 @@ export default class ModbusServerResponseHandler<FR extends ModbusAbstractRespon
     this._server.emit('postReadDiscreteInputs', request, cb)
 
     return response
+  }
+
+  private _handleReadDeviceIdentification (request: ModbusAbstractRequest, cb: (buffer: Buffer) => void) {
+    if (!isReadDeviceIdentificationRequestBody(request.body)) {
+      throw new Error(`InvalidRequestClass - Expected ReadDeviceIdentificationRequestBody but received ${request.body.name}`)
+    }
+
+    if (request.body.meiType !== 0x0E) {
+      const invalidMeiExceptionBody = new ExceptionResponseBody(request.body.fc, 0x01, request.body.meiType)
+      const invalidMeiExceptionResponse = this._fromRequest(request, invalidMeiExceptionBody)
+      cb(invalidMeiExceptionResponse.createPayload())
+      return invalidMeiExceptionResponse
+    }
+
+    if (request.body.readDeviceIdCode < 0x01 || request.body.readDeviceIdCode > 0x04) {
+      const invalidReadCodeExceptionBody = new ExceptionResponseBody(request.body.fc, 0x03, request.body.meiType)
+      const invalidReadCodeExceptionResponse = this._fromRequest(request, invalidReadCodeExceptionBody)
+      cb(invalidReadCodeExceptionResponse.createPayload())
+      return invalidReadCodeExceptionResponse
+    }
+
+    this._server.emit('preReadDeviceIdentification', request, cb)
+
+    if (this._server.listenerCount('readDeviceIdentification') > 0) {
+      this._server.emit('readDeviceIdentification', request, cb)
+      this._server.emit('postReadDeviceIdentification', request, cb)
+      return
+    }
+
+    const exceptionBody = new ExceptionResponseBody(request.body.fc, 0x01, request.body.meiType)
+    const exceptionResponse = this._fromRequest(request, exceptionBody)
+    cb(exceptionResponse.createPayload())
+    this._server.emit('postReadDeviceIdentification', request, cb)
+    return exceptionResponse
   }
 
   private _handleReadHoldingRegisters (request: ModbusAbstractRequest, cb: (buffer: Buffer) => void) {

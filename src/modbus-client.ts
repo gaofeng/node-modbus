@@ -4,6 +4,8 @@ import * as Stream from 'stream'
 
 import {
   ReadCoilsRequestBody,
+  ReadDeviceIdentificationCode,
+  ReadDeviceIdentificationRequestBody,
   ReadDiscreteInputsRequestBody,
   ReadHoldingRegistersRequestBody,
   ReadInputRegistersRequestBody,
@@ -157,6 +159,33 @@ export default abstract class MBClient<S extends Stream.Duplex, Req extends Modb
     let request
     try {
       request = new ReadInputRegistersRequestBody(start, count)
+    } catch (e) {
+      debug('unknown request error occurred')
+      return Promise.reject(e)
+    }
+
+    return this._requestHandler.register(request)
+  }
+
+  /** Execute Read Device Identification Request (Function Code 0x2B / MEI 0x0E)
+   * @param {number} [readDeviceIdCode=0x01] 0x01 basic, 0x02 regular, 0x03 extended, 0x04 single object.
+   * @param {number} [objectId=0x00] Object identifier.
+   * @example
+   * client.readDeviceIdentification(0x01, 0x00).then(function (res) {
+   *   console.log(res.response, res.request)
+   * }).catch(function (err) {
+   *   ...
+   * })
+   */
+  public readDeviceIdentification (
+    readDeviceIdCode: ReadDeviceIdentificationCode = 0x01,
+    objectId: number = 0x00
+  ) {
+    debug('issuing new read device identification request')
+
+    let request
+    try {
+      request = new ReadDeviceIdentificationRequestBody(readDeviceIdCode, objectId)
     } catch (e) {
       debug('unknown request error occurred')
       return Promise.reject(e)
