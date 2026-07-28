@@ -9,10 +9,10 @@ type AbstractRequest = ModbusAbstractRequest
 
 export interface IModbusServerOptions {
   id: number | null
-  coils: Buffer
-  discrete: Buffer
-  holding: Buffer
-  input: Buffer
+  coils: Buffer | null
+  discrete: Buffer | null
+  holding: Buffer | null
+  input: Buffer | null
 }
 
 const DEFAULT_MODBUS_SERVER_OPTIONS: IModbusServerOptions = {
