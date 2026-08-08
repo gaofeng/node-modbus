@@ -20,6 +20,10 @@ export default class ModbusServerRequestHandler<FB extends ModbusAbstractRequest
     return this._requests.shift()
   }
 
+  // Append incoming data to the internal buffer and parse out as many
+  // requests as possible. Valid requests are unshifted into the queue,
+  // while corrupted ones are skipped; the consumed payload is trimmed from
+  // the buffer after each iteration.
   public handle (data: Buffer) {
     this._buffer = Buffer.concat([this._buffer, data])
     debug('this._buffer', this._buffer)

@@ -81,7 +81,7 @@ export default class ModbusTCPClientRequestHandler extends MBClientRequestHandle
       /* clear all request, client must be reset */
       userRequest.reject(new UserRequestError({
         err: OUT_OF_SYNC,
-        message: 'request fc and response fc does not match.',
+        message: 'request id and response id do not match.',
         request
       }))
       this._clearAllRequests()

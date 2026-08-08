@@ -81,7 +81,7 @@ export default class ModbusRTURequest<ReqBody extends ModbusRequestBody = Modbus
 
       return new ModbusRTURequest(address, body, corrupted)
     } catch (e) {
-      debug('not enough data to create a rtu request', e)
+      debug('failed to parse RTU request from buffer', e)
       return null
     }
   }

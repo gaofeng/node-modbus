@@ -1,25 +1,29 @@
-'use strict'
+import sinon from 'sinon'
+import * as Modbus from '../src/modbus'
+import { DuplexStream } from '../src/modbus'
+import assert from 'assert'
+import ReadCoilsRequestBody from '../src/request/read-coils'
+import ExceptionResponseBody from '../src/response/exception'
+import ModbusTCPClientRequestHandler from '../src/tcp-client-request-handler'
 
-/* global describe, it, beforeEach  */
-
-const assert = require('assert')
-const Modbus = require('../')
-const sinon = require('sinon')
-const EventEmitter = require('events')
-
-const ReadCoilsRequest = require('../dist/request/read-holding-registers.js').default
-const ExceptionResponse = require('../dist/response/exception.js').default
-const ModbusTCPClientRequestHandler = require('../dist/tcp-client-request-handler.js').default
+class DuplexStreamMock extends DuplexStream {
+  open(): void {
+    console.log('open')
+  }
+  close(): void {
+    console.log('close')
+  }
+  write(_chunk: Buffer, _callback?: (error?: Error | null) => void): boolean {
+    return true
+  }
+}
 
 describe('TCP Client Tests.', function () {
-  let socket
-  let socketMock
+  let socket: DuplexStreamMock
+  let socketMock: sinon.SinonMock
 
   beforeEach(function () {
-    socket = new EventEmitter()
-
-    socket.write = function () {}
-
+    socket = new DuplexStreamMock()
     socketMock = sinon.mock(socket)
   })
   /* with the read coils tests we test most of the common errors
@@ -33,14 +37,15 @@ describe('TCP Client Tests.', function () {
         0x00
       ])
 
-      const response = Modbus.responses.ReadCoilsResponseBody.fromBuffer(buffer)
+      const response = Modbus.Responses.ReadCoilsResponseBody.fromBuffer(buffer)
 
       assert.ok(response !== null)
-      assert.equal(0x01, response.fc)
-      assert.equal(0x02, response.numberOfBytes)
-      assert.equal(0x04, response.byteCount)
+      assert.equal(0x01, response!.fc)
+      assert.equal(0x02, response!.numberOfBytes)
+      assert.equal(0x04, response!.byteCount)
       assert.deepEqual(
-        [true,
+        [
+          true,
           false,
           true,
           true,
@@ -56,7 +61,9 @@ describe('TCP Client Tests.', function () {
           false,
           false,
           false
-        ], response.valuesAsArray)
+        ],
+        response!.valuesAsArray
+      )
     })
     it('should handle invalid buffer content', function () {
       const buffer = Buffer.from([
@@ -65,7 +72,7 @@ describe('TCP Client Tests.', function () {
         0xdd // coils
       ])
 
-      const response = Modbus.responses.ReadCoilsResponseBody.fromBuffer(buffer)
+      const response = Modbus.Responses.ReadCoilsResponseBody.fromBuffer(buffer)
 
       assert.ok(response === null)
     })
@@ -75,10 +82,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.readCoils(10, 0x7D01)
-        .then(function (resp) {
+      client
+        .readCoils(10, 0x7d01)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('InvalidQuantity', e.message)
           socketMock.verify()
           done()
@@ -87,9 +96,12 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request with a exception response', function (done) {
       const client = new Modbus.client.TCP(socket)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x03, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x03, // byte count
         0x01, // unit id
         0x81, // function code
         0x01 // exception code
@@ -98,10 +110,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('ModbusException', e.err)
           assert.equal(0x01, e.response.body.fc)
           assert.equal(0x01, e.response.body.code)
@@ -117,27 +131,32 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('Timeout', e.err)
           socketMock.verify()
           done()
         })
     })
     it('should handle a valid request with read ECONNRESET', function (done) {
-      socket.write  = function() {
+      socket.write = function () {
         // Socket receives a read ECONNRESET, the socket is closed and no further data is received
-        socket.emit('close');
+        socket.emit('close')
+        return true
       }
       const client = new Modbus.client.TCP(socket, 2, 100) // unit id = 2, timeout = 100ms
       socket.emit('connect')
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('Offline', e.err)
           done()
         })
@@ -145,10 +164,12 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request while offline', function (done) {
       const client = new Modbus.client.TCP(socket)
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('Offline', e.err)
           done()
         })
@@ -156,16 +177,20 @@ describe('TCP Client Tests.', function () {
     it('should handle two valid request while offline', function (done) {
       const client = new Modbus.client.TCP(socket)
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('Offline', e.err)
         })
-      client.readCoils(11, 12)
-        .then(function (resp) {
+      client
+        .readCoils(11, 12)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('Offline', e.err)
           done()
         })
@@ -174,9 +199,12 @@ describe('TCP Client Tests.', function () {
     it('should handle two valid requests', function (done) {
       const client = new Modbus.client.TCP(socket)
       const responseA = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x05, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x05, // byte count
         0x01, // unit id
         0x01, // function code
         0x02, // byte count
@@ -184,9 +212,12 @@ describe('TCP Client Tests.', function () {
         0x00
       ])
       const responseB = Buffer.from([
-        0x00, 0x02, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x05, // byte count
+        0x00,
+        0x02, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x05, // byte count
         0x01, // unit id
         0x01, // function code
         0x02, // byte count
@@ -197,18 +228,22 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').twice()
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(true)
           socket.emit('data', responseB)
-        }).catch(function (e) {
+        })
+        .catch(function (_e) {
           assert.ok(false)
         })
-      client.readCoils(11, 12)
-        .then(function (resp) {
+      client
+        .readCoils(11, 12)
+        .then(function (_resp) {
           assert.ok(true)
           done()
-        }).catch(function (e) {
+        })
+        .catch(function (_e) {
           assert.ok(false)
         })
 
@@ -217,9 +252,12 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request with an out of sync response', function (done) {
       const client = new Modbus.client.TCP(socket)
       const response = Buffer.from([
-        0x00, 0x02, // transaction id is WRONG!!!!
-        0x00, 0x00, // protocol
-        0x00, 0x05, // byte count
+        0x00,
+        0x02, // transaction id is WRONG!!!!
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x05, // byte count
         0x01, // unit id
         0x01, // function code
         0x02, // byte count
@@ -230,10 +268,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal(Modbus.errors.isInternalException(e), false)
           assert.equal(Modbus.errors.isUserRequestError(e), true)
           assert.equal('OutOfSync', e.err)
@@ -246,9 +286,12 @@ describe('TCP Client Tests.', function () {
     it('should handle two valid request with an out of sync response', function (done) {
       const client = new Modbus.client.TCP(socket)
       const response = Buffer.from([
-        0x00, 0x02, // transaction id is WRONG!!!!
-        0x00, 0x00, // protocol
-        0x00, 0x05, // byte count
+        0x00,
+        0x02, // transaction id is WRONG!!!!
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x05, // byte count
         0x01, // unit id
         0x01, // function code
         0x02, // byte count
@@ -259,17 +302,21 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('OutOfSync', e.err)
         })
 
-      client.readCoils(12, 13)
+      client
+        .readCoils(12, 13)
         .then(function () {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('OutOfSync', e.err)
           socketMock.verify()
           done()
@@ -280,9 +327,12 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request with an out of sync response (wrong fc)', function (done) {
       const client = new Modbus.client.TCP(socket)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x05, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x05, // byte count
         0x01, // unit id
         0x02, // function code WRONG!!!
         0x02, // byte count
@@ -293,10 +343,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal(Modbus.errors.isInternalException(e), false)
           assert.equal(Modbus.errors.isUserRequestError(e), true)
           assert.equal('OutOfSync', e.err)
@@ -310,9 +362,12 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request with a wrong protocol response', function (done) {
       const client = new Modbus.client.TCP(socket)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x01, // protocol WRONG !!!!
-        0x00, 0x05, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x01, // protocol WRONG !!!!
+        0x00,
+        0x05, // byte count
         0x01, // unit id
         0x01, // function code
         0x02, // byte count
@@ -323,11 +378,13 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readCoils(10, 11)
-        .then(function (resp) {
+      client
+        .readCoils(10, 11)
+        .then(function (_resp) {
           assert.ok(false)
           done()
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal('Protocol', e.err)
           assert.equal(e.request instanceof Modbus.ModbusTCPRequest, true)
           socketMock.verify()
@@ -338,20 +395,22 @@ describe('TCP Client Tests.', function () {
     })
     it('should provide request in UserRequestError when ModbusException', function (done) {
       const handler = new ModbusTCPClientRequestHandler(socket, 2)
-      const request = new ReadCoilsRequest(0x0000, 0x0008)
-      const response = new ExceptionResponse(0x01, 0x01)
+      const request = new ReadCoilsRequestBody(0x0000, 0x0008)
+      const response = new ExceptionResponseBody(0x01, 0x01)
       const tcpResponse = new Modbus.ModbusTCPResponse(1, 0, response.byteCount, 4, response)
 
       socket.emit('connect')
 
       socketMock.expects('write').once()
 
-      handler.register(request)
-        .then(function (resp) {
+      handler
+        .register(request)
+        .then(function (_resp: any) {
           assert.ok(false)
 
           done()
-        }).catch(function (err) {
+        })
+        .catch(function (err: any) {
           // Exception type should be ModbusException not crcMismatch or any other
           assert.equal(err.err, 'ModbusException')
           assert.equal(err.request instanceof Modbus.ModbusTCPRequest, true)
@@ -365,19 +424,20 @@ describe('TCP Client Tests.', function () {
     })
     it('should provide request in UserRequestError when timed out', function (done) {
       const handler = new ModbusTCPClientRequestHandler(socket, 2, 200)
-      const request = new ReadCoilsRequest(0x0000, 0x0008)
-      const response = new ExceptionResponse(0x01, 0x01)
+      const request = new ReadCoilsRequestBody(0x0000, 0x0008)
 
       socket.emit('connect')
 
       socketMock.expects('write').once()
 
-      handler.register(request)
-        .then(function (resp) {
+      handler
+        .register(request)
+        .then(function (_resp: any) {
           assert.ok(false)
 
           done()
-        }).catch(function (err) {
+        })
+        .catch(function (err: any) {
           assert.equal(err.err, 'Timeout')
           assert.equal(err.request instanceof Modbus.ModbusTCPRequest, true)
           assert.equal(err.request.body, request)
@@ -391,9 +451,12 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x05, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x05, // byte count
         0x02, // unit id
         0x02, // function code
         0x02, // byte count
@@ -404,7 +467,8 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readDiscreteInputs(10, 11)
+      client
+        .readDiscreteInputs(10, 11)
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -412,7 +476,8 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error)
         })
 
@@ -424,10 +489,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.readDiscreteInputs(0xFFFF01, 11)
-        .then(function (resp) {
+      client
+        .readDiscreteInputs(0xffff01, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidStartAddress', error.message)
@@ -441,10 +508,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.readDiscreteInputs(10, 0x7D01)
-        .then(function (resp) {
+      client
+        .readDiscreteInputs(10, 0x7d01)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal(Modbus.errors.isInternalException(e), true)
           assert.equal(Modbus.errors.isUserRequestError(e), false)
           assert.equal('InvalidQuantity', e.message)
@@ -457,20 +526,26 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x07, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x07, // byte count
         0x02, // unit id
         0x03, // function code
         0x04, // byte count
-        0x43, 0x21, // registers
-        0x12, 0x34
+        0x43,
+        0x21, // registers
+        0x12,
+        0x34
       ])
 
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readHoldingRegisters(2, 2)
+      client
+        .readHoldingRegisters(2, 2)
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -478,7 +553,8 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error)
         })
 
@@ -490,10 +566,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.readHoldingRegisters(0xFFFF01, 11)
-        .then(function (resp) {
+      client
+        .readHoldingRegisters(0xffff01, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidStartAddress', error.message)
@@ -507,10 +585,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.readHoldingRegisters(10, 0x7D01)
-        .then(function (resp) {
+      client
+        .readHoldingRegisters(10, 0x7d01)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal(Modbus.errors.isInternalException(e), true)
           assert.equal(Modbus.errors.isUserRequestError(e), false)
           assert.equal('InvalidQuantity', e.message)
@@ -523,20 +603,26 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x07, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x07, // byte count
         0x02, // unit id
         0x04, // function code
         0x04, // byte count
-        0x43, 0x21, // registers
-        0x12, 0x34
+        0x43,
+        0x21, // register 1
+        0x12,
+        0x34 // register 2
       ])
 
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.readInputRegisters(2, 2)
+      client
+        .readInputRegisters(2, 2)
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -544,8 +630,9 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
-          console.error(error)
+        })
+        .catch(function (error) {
+          console.error('error:',error)
         })
 
       socket.emit('data', response)
@@ -555,11 +642,12 @@ describe('TCP Client Tests.', function () {
 
       socket.emit('connect')
       socketMock.expects('write').never()
-
-      client.readInputRegisters(0xFFFF01, 11)
-        .then(function (resp) {
+      client
+        .readInputRegisters(0xffff01, 11)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidStartAddress', error.message)
@@ -573,10 +661,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.readInputRegisters(10, 0x7D01)
-        .then(function (resp) {
+      client
+        .readInputRegisters(10, 0x7d01)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (e) {
+        })
+        .catch(function (e) {
           assert.equal(Modbus.errors.isInternalException(e), true)
           assert.equal(Modbus.errors.isUserRequestError(e), false)
           assert.equal('InvalidQuantity', e.message)
@@ -589,19 +679,25 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x06, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x06, // byte count
         0x02, // unit id
         0x05, // function code
-        0x12, 0x34, // output address
-        0xFF, 0x00 // output value
+        0x12,
+        0x34, // output address
+        0xff,
+        0x00 // output value
       ])
 
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.writeSingleCoil(2, true)
+      client
+        .writeSingleCoil(2, true)
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -609,7 +705,8 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error)
         })
 
@@ -621,10 +718,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeSingleCoil(0xFFFF01, false)
-        .then(function (resp) {
+      client
+        .writeSingleCoil(0xffff01, false)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidStartAddress', error.message)
@@ -637,19 +736,25 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x06, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x06, // byte count
         0x02, // unit id
         0x06, // function code
-        0x12, 0x34, // output address
-        0x43, 0x21 // output value
+        0x12,
+        0x34, // output address
+        0x43,
+        0x21 // output value
       ])
 
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.writeSingleRegister(0x1234, 0x4321)
+      client
+        .writeSingleRegister(0x1234, 0x4321)
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -657,7 +762,8 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error)
         })
 
@@ -669,10 +775,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeSingleRegister(0xFFFF01, 0x4321)
-        .then(function (resp) {
+      client
+        .writeSingleRegister(0xffff01, 0x4321)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidStartAddress', error.message)
@@ -686,10 +794,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeSingleRegister(0x1234, 0x12345)
-        .then(function (resp) {
+      client
+        .writeSingleRegister(0x1234, 0x12345)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal('InvalidValue', error.message)
           socketMock.verify()
           done()
@@ -701,10 +811,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeSingleRegister(0x1234, Math.PI)
-        .then(function (resp) {
+      client
+        .writeSingleRegister(0x1234, Math.PI)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidValue', error.message)
@@ -718,10 +830,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeSingleRegister(0x1234, -123)
-        .then(function (resp) {
+      client
+        .writeSingleRegister(0x1234, -123)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidValue', error.message)
@@ -734,19 +848,25 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request (with array)', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x06, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x06, // byte count
         0x02, // unit id
-        0x0F, // function code
-        0x12, 0x34, // starting address
-        0x00, 0x08 // quantity of outputs
+        0x0f, // function code
+        0x12,
+        0x34, // starting address
+        0x00,
+        0x08 // quantity of outputs
       ])
 
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.writeMultipleCoils(0x1234, [1, 0, 1, 1, 0, 1, 1, 1])
+      client
+        .writeMultipleCoils(0x1234, [true, false, true, true, false, true, true, true])
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -754,7 +874,8 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error)
         })
 
@@ -763,19 +884,25 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request (with buffer)', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x06, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x06, // byte count
         0x02, // unit id
-        0x0F, // function code
-        0x12, 0x34, // starting address
-        0x00, 0x08 // quantity of outputs
+        0x0f, // function code
+        0x12,
+        0x34, // starting address
+        0x00,
+        0x08 // quantity of outputs
       ])
 
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.writeMultipleCoils(0x1234, Buffer.from([0x7b]))
+      client
+        .writeMultipleCoils(0x1234, Buffer.from([0x7b]), 8)
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -783,7 +910,8 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error)
         })
 
@@ -796,10 +924,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeMultipleCoils(0xFFFF01, [0, 1, 0, 1, 0, 1, 0, 1, 0, 1])
-        .then(function (resp) {
+      client
+        .writeMultipleCoils(0xffff01, [false, true, false, true, false, true, false, true, false, true])
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidStartAddress', error.message)
@@ -809,19 +939,21 @@ describe('TCP Client Tests.', function () {
     })
     it('should handle a invalid request (invalid array size)', function (done) {
       const client = new Modbus.client.TCP(socket)
-      const arr = []
+      const arr: boolean[] = []
 
-      for (let i = 0; i < (0x07b0 * 8) + 1; i += 1) {
-        arr.push(1)
+      for (let i = 0; i < 0x07b0 * 8 + 1; i += 1) {
+        arr.push(true)
       }
 
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeMultipleCoils(0x0, arr)
-        .then(function (resp) {
+      client
+        .writeMultipleCoils(0x0, arr)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidArraySize', error.message)
@@ -836,10 +968,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeMultipleCoils(0x0, buf)
-        .then(function (resp) {
+      client
+        .writeMultipleCoils(0x0, buf, 0x7b0)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidBufferSize', error.message)
@@ -854,10 +988,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeMultipleCoils(0x0, buf, 0x7b0)
-        .then(function (resp) {
+      client
+        .writeMultipleCoils(0x0, buf, 0x7b0)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidBufferSize', error.message)
@@ -870,19 +1006,34 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request (with array)', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x06, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x06, // byte count
         0x02, // unit id
         0x10, // function code
-        0x12, 0x34, // starting address
-        0x00, 0x10 // quantity of outputs
+        0x12,
+        0x34, // starting address
+        0x00,
+        0x10 // quantity of outputs
       ])
 
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.writeMultipleRegisters(0x1234, [0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008])
+      client
+        .writeMultipleRegisters(0x1234, [
+          0x0001,
+          0x0002,
+          0x0003,
+          0x0004,
+          0x0005,
+          0x0006,
+          0x0007,
+          0x0008
+        ])
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -890,7 +1041,8 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error)
         })
 
@@ -899,19 +1051,45 @@ describe('TCP Client Tests.', function () {
     it('should handle a valid request (with buffer)', function (done) {
       const client = new Modbus.client.TCP(socket, 2)
       const response = Buffer.from([
-        0x00, 0x01, // transaction id
-        0x00, 0x00, // protocol
-        0x00, 0x06, // byte count
+        0x00,
+        0x01, // transaction id
+        0x00,
+        0x00, // protocol
+        0x00,
+        0x06, // byte count
         0x02, // unit id
         0x10, // function code
-        0x12, 0x34, // starting address
-        0x00, 0x10 // quantity of outputs
+        0x12,
+        0x34, // starting address
+        0x00,
+        0x10 // quantity of outputs
       ])
 
       socket.emit('connect')
       socketMock.expects('write').once()
 
-      client.writeMultipleRegisters(0x1234, Buffer.from([0x00, 0x01, 0x00, 0x02, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00, 0x06, 0x00, 0x07, 0x00, 0x08]))
+      client
+        .writeMultipleRegisters(
+          0x1234,
+          Buffer.from([
+            0x00,
+            0x01,
+            0x00,
+            0x02,
+            0x00,
+            0x03,
+            0x00,
+            0x04,
+            0x00,
+            0x05,
+            0x00,
+            0x06,
+            0x00,
+            0x07,
+            0x00,
+            0x08
+          ])
+        )
         .then(function (resp) {
           assert.ok(resp.response)
           assert.ok(resp.request)
@@ -919,7 +1097,8 @@ describe('TCP Client Tests.', function () {
           socketMock.verify()
 
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error)
         })
 
@@ -932,10 +1111,12 @@ describe('TCP Client Tests.', function () {
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeMultipleRegisters(0xFFFF01, [])
-        .then(function (resp) {
+      client
+        .writeMultipleRegisters(0xffff01, [])
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidStartAddress', error.message)
@@ -945,19 +1126,21 @@ describe('TCP Client Tests.', function () {
     })
     it('should handle a invalid request (invalid array size)', function (done) {
       const client = new Modbus.client.TCP(socket)
-      const arr = []
+      const arr: number[] = []
 
-      for (let i = 0; i < (0x007b + 1); i += 1) {
+      for (let i = 0; i < 0x007b + 1; i += 1) {
         arr.push(i)
       }
 
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeMultipleRegisters(0x0, arr)
-        .then(function (resp) {
+      client
+        .writeMultipleRegisters(0x0, arr)
+        .then(function (_resp) {
           assert.ok(false)
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidArraySize', error.message)
@@ -967,16 +1150,18 @@ describe('TCP Client Tests.', function () {
     })
     it('should handle a invalid request (invalid buffer size)', function (done) {
       const client = new Modbus.client.TCP(socket)
-      const buf = Buffer.alloc((0x007b * 2) + 1)
+      const buf = Buffer.alloc(0x007b * 2 + 1)
 
       socket.emit('connect')
       socketMock.expects('write').never()
 
-      client.writeMultipleRegisters(0x0, buf)
-        .then(function (resp) {
+      client
+        .writeMultipleRegisters(0x0, buf)
+        .then(function (_resp) {
           assert.ok(false)
           done()
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           assert.equal(Modbus.errors.isInternalException(error), true)
           assert.equal(Modbus.errors.isUserRequestError(error), false)
           assert.equal('InvalidBufferSize', error.message)
