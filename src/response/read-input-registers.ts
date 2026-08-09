@@ -80,7 +80,11 @@ export default class ReadInputRegistersResponseBody extends ModbusReadResponseBo
       this._valuesAsBuffer = Buffer.from(values)
       this._bufferLength += values.length * 2
     } else if (values instanceof Buffer) {
-      this._valuesAsArray = Uint16Array.from(values)
+      const arr = new Uint16Array(values.length / 2)
+      for (let i = 0; i < arr.length; i++) {
+        arr[i] = values.readUInt16BE(i * 2)
+      }
+      this._valuesAsArray = arr
       this._valuesAsBuffer = values
       this._bufferLength += values.length
     } else {
