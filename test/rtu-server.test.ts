@@ -50,6 +50,58 @@ describe('RTU Server Tests.', function () {
     })
   })
 
+  describe('Stream resynchronisation after leading garbage bytes', function () {
+    it('should recover and process a valid frame preceded by interference bytes', function (done) {
+      // A valid Write Single Coil frame (address 0x02, coil ON at 0x0001)
+      const validFrame = Buffer.from([
+        0x02, // address
+        0x05, // function code
+        0x00, 0x01, // address
+        0xFF, 0x00, // value
+        0xDD, 0xC9 // CRC
+      ])
+      // Leading interference: address=0xFF, function code=0xFF (>0x2B, garbage).
+      // Before the fix this desynchronised the stream and the valid frame was
+      // never processed (done() never called -> test timeout).
+      const garbage = Buffer.from([0xFF, 0xFF, 0xAA, 0x55])
+
+      const expectedCoils = Buffer.from([0x57, 0x55, 0x55])
+
+      socket.write = (response: Buffer) => {
+        assert.deepEqual(validFrame, response)
+        assert.deepEqual(expectedCoils, server.coils)
+        done()
+        return true
+      }
+
+      socket.emit('data', Buffer.concat([garbage, validFrame]))
+    })
+
+    it('should not drop bytes of a valid frame split across data events', function (done) {
+      // Same valid frame, but the first chunk is an incomplete prefix that
+      // looks like a plausible frame start (valid function code at byte 1).
+      // The handler must wait for more data rather than discarding bytes.
+      const validFrame = Buffer.from([
+        0x02, // address
+        0x05, // function code
+        0x00, 0x01, // address
+        0xFF, 0x00, // value
+        0xDD, 0xC9 // CRC
+      ])
+      const expectedCoils = Buffer.from([0x57, 0x55, 0x55])
+
+      socket.write = (response: Buffer) => {
+        assert.deepEqual(validFrame, response)
+        assert.deepEqual(expectedCoils, server.coils)
+        done()
+        return true
+      }
+
+      socket.emit('data', validFrame.subarray(0, 4)) // incomplete prefix
+      socket.emit('data', validFrame.subarray(4)) // remainder
+    })
+  })
+
   describe('Write Single Coil Tests.', function () {
     it('should force a coil ON in the server buffer at address 1', function (done) {
       const request = Buffer.from([

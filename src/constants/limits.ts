@@ -8,10 +8,14 @@ const COIL_MAX = 0x01
 
 const ERROR_CODE_THRESHOLD = 0x80
 
+// RTU 最大 ADU 长度：address(1) + PDU(253) + CRC(2)
+const MAX_RTU_ADU_SIZE = 256
+
 export const LIMITS = {
   COIL_MAX,
   COIL_MIN,
   ERROR_CODE_THRESHOLD,
+  MAX_RTU_ADU_SIZE,
   REGISTER_MAX,
   REGISTER_MIN,
   UINT16_MAX,
