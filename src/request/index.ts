@@ -6,7 +6,7 @@ export { default as ReadInputRegistersRequestBody, isReadInputRegistersRequestBo
 export {
   default as ReadDeviceIdentificationRequestBody,
   isReadDeviceIdentificationRequestBody,
-  ReadDeviceIdentificationCode
+  type ReadDeviceIdentificationCode
 } from './read-device-identification'
 export { default as ModbusRequestBody, isModbusRequestBody, type ModbusRequestTypeName } from './request-body'
 export { default as RequestFactory } from './request-factory'

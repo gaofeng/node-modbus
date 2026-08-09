@@ -1,5 +1,5 @@
-import { FC } from '../codes/index.js'
-import ModbusResponseBody from './response-body.js'
+import { FC } from '../codes'
+import ModbusResponseBody from './response-body'
 
 export const READ_DEVICE_ID_MEI_TYPE = 0x0E
 

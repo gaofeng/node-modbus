@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import ModbusTCPClientResponseHandler from '../src/tcp-client-response-handler'
-import { ExceptionResponseBody, ReadCoilsResponseBody } from '../src/response'
+import { ExceptionResponseBody, ReadCoilsResponseBody, ReadDeviceIdentificationResponseBody } from '../src/response'
 
 describe('Modbus/TCP Client Response Handler Tests', function () {
   let handler: ModbusTCPClientResponseHandler
@@ -65,12 +65,13 @@ describe('Modbus/TCP Client Response Handler Tests', function () {
     assert.equal(0x0E, response.bodyLength)
     assert.equal(0x14, response.byteCount)
     assert.equal(0x03, response.unitId)
-    assert.equal(0x2B, response.body.fc)
-    assert.equal(0x0E, response.body.meiType)
-    assert.equal(0x01, response.body.readDeviceIdCode)
-    assert.equal(0x01, response.body.conformityLevel)
-    assert.equal(0x01, response.body.numberOfObjects)
-    assert.equal('ACME', response.body.objects[0].value.toString('ascii'))
+    const body = response.body as ReadDeviceIdentificationResponseBody
+    assert.equal(0x2B, body.fc)
+    assert.equal(0x0E, body.meiType)
+    assert.equal(0x01, body.readDeviceIdCode)
+    assert.equal(0x01, body.conformityLevel)
+    assert.equal(0x01, body.numberOfObjects)
+    assert.equal('ACME', body.objects[0].value.toString('ascii'))
   })
   it('should handle a exception', function () {
     const responseBuffer = Buffer.from([
@@ -118,10 +119,11 @@ describe('Modbus/TCP Client Response Handler Tests', function () {
     assert.equal(0x04, response.bodyLength)
     assert.equal(0x0A, response.byteCount)
     assert.equal(0x03, response.unitId)
-    assert.equal(0x2B, response.body.fc)
-    assert.equal(0x0E, response.body.meiType)
-    assert.equal(0x03, response.body.code)
-    assert.equal('ILLEGAL DATA VALUE', response.body.message)
+    const body = response.body as ExceptionResponseBody
+    assert.equal(0x2B, body.fc)
+    assert.equal(0x0E, body.meiType)
+    assert.equal(0x03, body.code)
+    assert.equal('ILLEGAL DATA VALUE', body.message)
   })
   it('should handle a FC43 exception without MEI type', function () {
     const responseBuffer = Buffer.from([
@@ -143,10 +145,11 @@ describe('Modbus/TCP Client Response Handler Tests', function () {
     assert.equal(0x03, response.bodyLength)
     assert.equal(0x09, response.byteCount)
     assert.equal(0x03, response.unitId)
-    assert.equal(0x2B, response.body.fc)
-    assert.equal(undefined, response.body.meiType)
-    assert.equal(0x01, response.body.code)
-    assert.equal('ILLEGAL FUNCTION', response.body.message)
+    const body = response.body as ExceptionResponseBody
+    assert.equal(0x2B, body.fc)
+    assert.equal(undefined, body.meiType)
+    assert.equal(0x01, body.code)
+    assert.equal('ILLEGAL FUNCTION', body.message)
   })
   it('should handle a chopped response', function () {
     const responseBufferA = Buffer.from([

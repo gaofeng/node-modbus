@@ -1,6 +1,6 @@
 import { FC } from '../codes'
 
-import ModbusRequestBody from './request-body.js'
+import ModbusRequestBody from './request-body'
 
 export const READ_DEVICE_ID_MEI_TYPE = 0x0E
 
@@ -22,6 +22,9 @@ export function isReadDeviceIdentificationCode (x: number): x is ReadDeviceIdent
  * @extends ModbusRequestBody
  */
 export default class ReadDeviceIdentificationRequestBody extends ModbusRequestBody {
+  get address(): number {
+    throw new Error('Method not implemented.')
+  }
   get meiType () {
     return this._meiType
   }
