@@ -1,14 +1,10 @@
-import Modbus from '../../../dist/modbus';
-import SerialPort, { OpenOptions } from 'serialport';
+import * as Modbus from '../../../src/modbus'
+import { SerialStream } from './SerialStream';
+import { handleErrors } from './handle-errors';
 
-const options: OpenOptions = {
-  baudRate: 19200,
-  parity: 'none',
-  stopBits: 1,
-  dataBits: 8
-}
+// pnpm exec ts-node examples/typescript/serial/WriteSingleCoil.ts
 
-const socket = new SerialPort('COM6', options)
+const socket = new SerialStream('COM1', 19200, 'none');
 
 const address = 0x01;
 const client = new Modbus.client.RTU(socket, address)
@@ -16,7 +12,11 @@ const client = new Modbus.client.RTU(socket, address)
 const writeAddress = 0;
 const writeValue = true; // either 0, 1, or boolean
 
-socket.on('connect', function () {
+socket.on('close', function () {
+  console.log('closed')
+})
+
+socket.on('open', function () {
 
   client.writeSingleCoil(writeAddress, writeValue)
     .then(({ metrics, request, response }) => {
@@ -28,27 +28,11 @@ socket.on('connect', function () {
 
 })
 
-socket.on('error', function (err) {
-  console.log(err)
+socket.on('data', function (data: Buffer) {
+  console.log('data:', data)
 })
 
-function handleErrors(err: any) {
-  if (Modbus.errors.isUserRequestError(err)) {
-    switch (err.err) {
-      case 'OutOfSync':
-      case 'Protocol':
-      case 'Timeout':
-      case 'ManuallyCleared':
-      case 'ModbusException':
-      case 'Offline':
-      case 'crcMismatch':
-        console.log('Error Message: ' + err.message, 'Error' + 'Modbus Error Type: ' + err.err)
-        break;
-    }
+socket.on('error', console.error)
 
-  } else if (Modbus.errors.isInternalException(err)) {
-    console.log('Error Message: ' + err.message, 'Error' + 'Error Name: ' + err.name, err.stack)
-  } else {
-    console.log('Unknown Error', err);
-  }
-}
+// 手动打开串口
+socket.open()
