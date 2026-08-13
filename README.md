@@ -15,7 +15,7 @@ Version 4.0.0 is a early beta release. Please use and test it and help make it b
 Installation
 ------------
 
-Just type `npm install jsmodbus` and you are ready to go. You can also install this module globally and use the Command Line Interface. Simply type `npm install -g jsmodbus`.
+Just type `npm install @guyun/jsmodbus` and you are ready to go. You can also install this module globally and use the Command Line Interface. Simply type `npm install -g @guyun/jsmodbus`.
 
 CLI
 ---
@@ -39,7 +39,7 @@ TCP Client Example
 --------------
 ```javascript
 // create a tcp modbus client
-const Modbus = require('jsmodbus')
+const Modbus = require('@guyun/jsmodbus')
 const net = require('net')
 const socket = new net.Socket()
 const client = new Modbus.client.TCP(socket, unitId)
@@ -55,7 +55,7 @@ RTU Client Example
 ```javascript
 
 // create a tcp modbus client
-const Modbus = require('jsmodbus')
+const Modbus = require('@guyun/jsmodbus')
 const SerialPort = require('serialport')
 const options = {
 baudRate: 57600
@@ -97,7 +97,7 @@ Server example
 --------------
 ```javascript
 
-const modbus = require('jsmodbus')
+const modbus = require('@guyun/jsmodbus')
 const net = require('net')
 const netServer = new net.Server()
 const server = new modbus.server.TCP(netServer)
