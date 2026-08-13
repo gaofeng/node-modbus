@@ -41,7 +41,7 @@
   "scripts": {
     "test": "npm run lint && npm run build && npx mocha test/*.test.js",
     "build": "npx tsc",
-    "lint": "yarn eslint .",
+    "lint": "pnpm eslint .",
     "watch": "npm run lint && npm run build && npx mocha --watch test/*.test.js",
     "prepublishOnly": "npm run test",
     "prepare": "npm run build",

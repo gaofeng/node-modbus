@@ -22,14 +22,8 @@ export default class ModbusRTUClientResponseHandler extends ModbusClientResponse
 
     debug('buffer', this._buffer)
 
-    do {
-      const response = ModbusRTUResponse.fromBuffer(this._buffer)
-
-      if (!response) {
-        debug('not enough data available to parse')
-        return
-      }
-
+    let response
+    while ((response = ModbusRTUResponse.fromBuffer(this._buffer)) != null) {
       debug('crc', response.crc)
 
       debug('reset buffer from', this._buffer.length, 'to', (this._buffer.length - response.byteCount))
@@ -38,7 +32,9 @@ export default class ModbusRTUClientResponseHandler extends ModbusClientResponse
       this._buffer = this._buffer.slice(response.byteCount)
 
       this._messages.push(response)
-    } while (1)
+    }
+
+    debug('not enough data available to parse')
   }
 
   public shift () {

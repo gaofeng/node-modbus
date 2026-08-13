@@ -24,14 +24,8 @@ export default class ModbusTCPClientResponseHandler extends ModbusClientResponse
 
     debug('buffer', this._buffer)
 
-    do {
-      const response = ModbusTCPResponse.fromBuffer(this._buffer)
-
-      if (!response) {
-        debug('not enough data available to parse')
-        return
-      }
-
+    let response
+    while ((response = ModbusTCPResponse.fromBuffer(this._buffer)) != null) {
       debug(
         'response id', response.id,
         'protocol', response.protocol,
@@ -45,6 +39,8 @@ export default class ModbusTCPClientResponseHandler extends ModbusClientResponse
 
       /* reduce buffer */
       this._buffer = this._buffer.slice(response.byteCount)
-    } while (1)
+    }
+
+    debug('not enough data available to parse')
   }
 }
