@@ -1,6 +1,8 @@
 import { IModbusServerOptions, ModbusRTUServer } from '../../../src/modbus'
 import { SerialStream } from './SerialStream'
 
+// pnpm exec ts-node examples/typescript/serial/SimpleServer.ts
+
 const options: IModbusServerOptions = {
   id: 1,
   coils: null,
