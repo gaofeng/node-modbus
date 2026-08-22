@@ -58,17 +58,32 @@ export class SerialStream extends DuplexStream {
   get portName() {
     return this._portName
   }
-  // 实现 open 方法
-  public open(callback?: (error?: Error | null) => void): void {
+  // 实现 open 方法（支持 callback 和 promise 两种方式）
+  public open(callback?: (error?: Error | null) => void): void | Promise<void> {
     if (this.isOpen) {
       if (callback) callback(null) // 已打开，直接回调成功
-      return
+      return Promise.resolve()
     }
     // if (this.port == null) {
     //   if (callback) callback(new Error('串口关闭后无法再次打开'))
     //   return
     // }
 
+    // 如果没有提供 callback，返回 promise
+    if (!callback) {
+      return new Promise((resolve, reject) => {
+        this.port.open((err) => {
+          if (err) {
+            this.emit('error', err)
+            reject(err)
+            return
+          }
+          resolve()
+        })
+      })
+    }
+
+    // 有 callback 时使用原有逻辑
     this.port.open((err) => {
       if (err) {
         this.emit('error', err)
@@ -104,6 +119,7 @@ export class SerialStream extends DuplexStream {
     this.port.close()
     this.port.removeAllListeners()
     this.isOpen = false
+    this.emit('close')
   }
 
   write(chunk: Buffer, _callback?: (error?: Error | null) => void) {
