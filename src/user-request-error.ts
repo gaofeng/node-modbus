@@ -25,7 +25,7 @@ export class UserRequestError<Res extends ModbusAbstractResponse, Req extends Mo
 }
 
 export function isUserRequestError (x: any): x is UserRequestError<any, any> {
-  if (x instanceof isUserRequestError) {
+  if (x instanceof UserRequestError) {
     return true
   }
 
